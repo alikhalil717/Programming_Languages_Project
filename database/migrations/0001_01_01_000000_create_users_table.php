@@ -22,6 +22,8 @@ return new class extends Migration
             $table->string('profile_picture')->nullable();  
             $table->date('date_of_birth')->nullable();  
             $table->string('role')->default('user');
+            $table->string('personal_id')->nullable();
+            $table->string('status')->default('pending');
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
         });
