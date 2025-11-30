@@ -19,15 +19,16 @@ class User extends Authenticatable
      */
     protected $fillable = [
        
-        'first_name',
-        'last_name',
-        'phone_number',
-        'username',
-        'date_of_birth',
-        'profile_picture',
-        'role',
+    
+        'name',
         'email',
         'password',
+        'profile_picture',
+        'date_of_birth',
+        'role',
+        'personal_id',
+        'status',
+    
     ];
 
     /**
@@ -69,6 +70,14 @@ public function apartments()
     public function targetAdminActions()
     {
         return $this->hasMany(Adminaction::class, 'target_user_id');
+    }
+    public function rentals()
+    {
+        return $this->hasMany(Rental::class, 'renter_id');
+    }
+    public function personalId()
+    {
+        return $this->hasOne(Personalid::class, 'user_id');
     }
 
 

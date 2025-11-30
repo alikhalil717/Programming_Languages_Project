@@ -22,7 +22,7 @@ class ApartmentFactory extends Factory
             'description' => fake()->paragraph(),
             'address' => fake()->streetAddress(),
             'city' => fake()->city(),
-            'state' => fake()->state(),
+            'state' => fake()->streetAddress(),
             'price_per_night' => fake()->randomFloat(2, 50, 500),
             'number_of_bedrooms' => fake()->numberBetween(1, 5),
             'number_of_bathrooms' => fake()->numberBetween(1, 3),
