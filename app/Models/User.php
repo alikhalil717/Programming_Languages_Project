@@ -18,7 +18,14 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+       
+        'first_name',
+        'last_name',
+        'phone_number',
+        'username',
+        'date_of_birth',
+        'profile_picture',
+        'role',
         'email',
         'password',
     ];
@@ -30,14 +37,54 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
+      
     ];
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id');
+    }
+    public function profileImages()
+    {
+        return $this->hasMany(Profileimage::class, 'user_id');
+    }   
+
+
+public function apartments()
+    {
+        return $this->hasMany(Apartment::class, 'owner_id');
+    }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class, 'user_id');
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'user_id');
+    }
+    public function adminActions()
+    {
+        return $this->hasMany(Adminaction::class, 'admin_id');
+    }
+    public function targetAdminActions()
+    {
+        return $this->hasMany(Adminaction::class, 'target_user_id');
+    }
+
+
+    
+
+
+
     /**
-     * Get the attributes that should be cast.
+     * The attributes that should be cast.
      *
-     * @return array<string, string>
+     * @var array<string, string>
      */
+    
+
+
+
     protected function casts(): array
     {
         return [
@@ -45,4 +92,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
 }
