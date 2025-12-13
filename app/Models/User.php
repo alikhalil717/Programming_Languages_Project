@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable , HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -20,15 +21,17 @@ class User extends Authenticatable
     protected $fillable = [
        
     
-        'name',
+        'first_name',
+        'last_name',
         'email',
+        'username',
         'password',
-        'profile_picture',
+        'phone_number',
         'date_of_birth',
-        'role',
         'personal_id',
+        'role',
         'status',
-    
+        
     ];
 
     /**
@@ -40,14 +43,26 @@ class User extends Authenticatable
         'password',
       
     ];
+public function delete(){
 
+    $this->notifications()->delete();
+    $this->profile_picture()->delete();
+    $this->apartments()->delete();
+    $this->reviews()->delete();
+    $this->favorites()->delete();
+    $this->adminActions()->delete();
+    $this->targetAdminActions()->delete();
+    $this->rentals()->delete();
+    $this->personalId()->delete();
+    parent::delete();
+}
     public function notifications()
     {
         return $this->hasMany(Notification::class, 'user_id');
     }
-    public function profileImages()
+    public function profile_picture()
     {
-        return $this->hasMany(Profileimage::class, 'user_id');
+        return $this->hasOne(Profileimage::class, 'user_id');
     }   
 
 
