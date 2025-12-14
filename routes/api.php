@@ -44,10 +44,10 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::get('approve-user/{id}', [\App\Http\Controllers\AdminController::class, 'approveUser']);
 
        //! Stats and Reports------------
-       //TODO    
+       //TODO
     Route::get('/admin/reports', [\App\Http\Controllers\AdminController::class, 'viewReports']);
     Route::get('/admin/stats', [\App\Http\Controllers\AdminController::class, 'getStats']);
-        
+
        //! appartment management--------
        //TODO
     Route::get('/admin/apartments', [\App\Http\Controllers\AdminApartmentController::class, 'index']);

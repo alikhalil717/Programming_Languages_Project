@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\WebAuthController;
 
+
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -40,80 +41,80 @@ use App\Http\Controllers\WebAuthController;
 // */
 
 // Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    
+
 //     // Dashboard
 //     Route::get('/dashboard', function () {
 //         return view('admin.dashboard');
 //     })->name('dashboard');
-    
+
 //     // Users Management
 //     Route::get('/users', function () {
 //         return view('admin.users');
 //     })->name('users');
-    
+
 //     Route::get('/users/create', function () {
 //         return view('admin.users.create');
 //     })->name('users.create');
-    
+
 //     // Apartments Management
 //     Route::get('/apartments', function () {
 //         return view('admin.apartments');
 //     })->name('apartments');
-    
+
 //     Route::get('/apartments/create', function () {
 //         return view('admin.apartments.create');
 //     })->name('apartments.create');
-    
+
 //     // Rentals Management
 //     Route::get('/rentals', function () {
 //         return view('admin.rentals');
 //     })->name('rentals');
-    
+
 //     // Reviews Management
 //     Route::get('/reviews', function () {
 //         return view('admin.reviews');
 //     })->name('reviews');
-    
+
 //     // Reports
 //     Route::get('/reports', function () {
 //         return view('admin.reports');
 //     })->name('reports');
-    
+
 //     // Settings
 //     Route::get('/settings', function () {
 //         return view('admin.settings');
 //     })->name('settings');
-    
+
 //     // Other admin pages
 //     Route::get('/payments', function () {
 //         return view('admin.payments');
 //     })->name('payments');
-    
+
 //     Route::get('/inquiries', function () {
 //         return view('admin.inquiries');
 //     })->name('inquiries');
-    
+
 //     Route::get('/notifications', function () {
 //         return view('admin.notifications');
 //     })->name('notifications');
-    
+
 //     Route::get('/logs', function () {
 //         return view('admin.logs');
 //     })->name('logs');
-    
+
 //     Route::get('/analytics', function () {
 //         return view('admin.analytics');
 //     })->name('analytics');
-    
+
 //     Route::get('/support', function () {
 //         return view('admin.support');
 //     })->name('support');
-    
+
 //     // Admin Profile
 //     Route::get('/profile', function () {
 //         return view('admin.profile');
 //     })->name('profile');
-    
+
 //     // Admin Logout
 //     Route::post('/logout', function () {
 //         Auth::guard('web')->logout();
@@ -130,7 +131,7 @@ use App\Http\Controllers\WebAuthController;
 // */
 
 // Route::prefix('api')->group(function () {
-//     //! AUTH ROUTES
+//     /! AUTH ROUTES
 //     Route::post('/register', [AuthController::class, 'register']);
 //     Route::post('/login', [AuthController::class, 'login']);
 //     Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -140,14 +141,14 @@ use App\Http\Controllers\WebAuthController;
 //     Route::post('verify-email', [AuthController::class, 'verifyEmail'])->middleware('auth:sanctum');
 //     Route::post('resend-verification', [AuthController::class, 'resendVerification'])->middleware('auth:sanctum');
 
-//     //! USER ROUTES
+//     /! USER ROUTES
 //     Route::get('/users', [UserController::class, 'index'])->middleware('auth:sanctum');
 //     Route::post('/users', [UserController::class, 'store'])->middleware('auth:sanctum');
 //     Route::get('/users/{id}', [UserController::class, 'show'])->middleware('auth:sanctum');
 //     Route::put('/users/{id}', [UserController::class, 'update'])->middleware('auth:sanctum');
 //     Route::delete('/users/{id}', [UserController::class, 'destroy'])->middleware('auth:sanctum');
 
-//     //! Admin API Routes
+//     /! Admin API Routes
 //     Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 //         Route::get('/admin/users', [AdminController::class, 'listUsers']);
 //         Route::delete('/admin/users/{id}', [AdminController::class, 'deleteUser']);
@@ -178,6 +179,35 @@ use App\Http\Controllers\WebAuthController;
 //             'email_verified_at' => now(),
 //         ]
 //     );
-    
+
 //     return 'Admin user created/updated:<br>Email: admin@example.com<br>Password: admin123';
 // });
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
+});
+
+Route::get('/users', function () {
+    return view('users');
+});
+
+Route::get('/apartments', function () {
+    return view('apartments');
+});
+
+Route::get('/bookings', function () {
+    return view('bookings');
+});
+Route::get('/messages', function () {
+    return view('messages');
+});
+
+Route::get('/reviews', function () {
+    return view('reviews');
+});
+
+Route::get('/settings', function () {
+    return view('settings');
+});
+
+
