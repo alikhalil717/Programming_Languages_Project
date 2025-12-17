@@ -17,10 +17,11 @@ class AuthController extends Controller
     }
     public function register(CreateUserRequest $request)
     {
-        
-      $data=$this->authService->register($request->validated());
-     
-        return response()->json(['message' => 'User registered successfully', 'data' => $data],201);
+        $data=$this->authService->register($request->validated());
+     if ($data['success']===false){
+        return response()->json(['message' => $data['message'],'success' => false],400);
+     }
+        return response()->json(['message' => 'User registered successfully','success' => true],201);
         
     }
 
@@ -28,7 +29,10 @@ class AuthController extends Controller
     {
        
         $data=$this->authService->login($request->validated());
-        return response()->json(['message' => 'User logged in successfully', 'data' => $data],200);
+        if($data['success']===false){
+            return response()->json(['message' => $data['message'],'success' => false],401);
+         }  
+        return response()->json(['message' => 'User logged in successfully', 'success' => true , 'token' => $data['token']],200);
 
     }
 

@@ -31,13 +31,13 @@ class AuthService
             'username' => $data['username'],
             'password' => Hash::make($data['password']),
             'phone_number' => $data['phone_number'] ?? null,
-            'profile_picture' => $data['profile_picture'] ?? null,
             'date_of_birth' => $data['date_of_birth'] ?? null,
             'personal_id' => $data['personal_id'] ?? null,
            
         ]);
-       $token=$user->createToken('token')->plainTextToken;
-       $data=['user'=>$user,'token'=>$token];   
+      $data['success']=true;
+      $data['message']='User registered successfully';
+
         return $data;
     }
 
@@ -56,21 +56,24 @@ class AuthService
     {
         $user = null;
 
-        if (isset($data['email'])) {
-            $user = User::query()->where('email', '=',$data['email'])->firstOrFail();
-        } elseif (isset($data['username'])) {
-            $user = User::query()->where('username', '=', $data['username'])->firstOrFail();
-        } elseif (isset($data['phone_number'])) {
-            $user = User::query()->where('phone_number', '=' ,$data['phone_number'])->firstOrFail();
-        }
+       try{
+      $user = User::query()->where('phone_number', '=' ,$data['phone_number'])->firstOrFail();
+
+       }
+         catch (\Exception $e){
+           throw new AuthenticationException('invalid input credentials');
+         }
         
+        if (!$user) {
+            throw new AuthenticationException('invalid input credentials');
+        }   
 
         if (!Hash::check($data['password'], $user->password)) {
-            throw new AuthenticationException('invalid input 1');
+            throw new AuthenticationException('invalid input credentials');
          
         }
        $token = $user->createToken('token')->plainTextToken;
-          $data= ['user' => $user, 'token' => $token];
+          $data= [ 'token' => $token, 'massage' => 'User logged in successfully' ,'success' => true ];
         return $data;     
     }
     /**
@@ -107,7 +110,7 @@ class AuthService
             try {
             $imagepath= $image->image_path;
           
-        $deleted = false;
+          $deleted = false;
             // if (File::exists($path)) {
             //     File::delete($path);
             //     $deleted = true;
@@ -116,11 +119,11 @@ class AuthService
 
             Storage::disk('public')->delete(  $imagepath);
         
-        if (!$deleted) {
-            \Log::warning("Image file not found in any path for UserID: " . $user->AS);
-        }
+          if (!$deleted) {
+            \Log::warning("Image file not found in any path for UserID: " . $user->id);
+          }
         
-        $image->delete();
+          $image->delete();
         
           $path = $request->file('profile_picture')->store('profile_pictures', 'public');
                      $user->profile_picture()->create([
