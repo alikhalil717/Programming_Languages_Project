@@ -24,7 +24,6 @@ class LoginUserRequest extends FormRequest
     {
         return [
             'email' => 'nullable|string|email|max:255',
-            'username' => 'nullable|string|max:255|min:3',
             'phone_number' => 'required|string|max:20|min:9',
             'password' => 'required|string|min:8',
         ];

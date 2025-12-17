@@ -27,7 +27,6 @@ class UserFactory extends Factory
             'first_name' => fake()->firstName(),
             'last_name' => fake()->lastName(),
             'phone_number' => fake()->phoneNumber(),
-            'username' => fake()->unique()->userName(),
             'date_of_birth' => fake()->date(),
             'profile_picture' => fake()->imageUrl(200, 200, 'people'),
             'role' => 'user',
