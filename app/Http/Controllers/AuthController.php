@@ -17,7 +17,7 @@ class AuthController extends Controller
     }
     public function register(CreateUserRequest $request)
     {
-        $data=$this->authService->register($request->validated());
+        $data=$this->authService->register($request) ;
      if ($data['success']===false){
         return response()->json(['message' => $data['message'],'success' => false],400);
      }
@@ -28,7 +28,7 @@ class AuthController extends Controller
     public function login(LoginUserRequest $request)
     {
        
-        $data=$this->authService->login($request->validated());
+        $data=$this->authService->login($request);
         if($data['success']===false){
             return response()->json(['message' => $data['message'],'success' => false],401);
          }  

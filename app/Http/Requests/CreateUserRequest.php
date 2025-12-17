@@ -28,7 +28,6 @@ class CreateUserRequest extends FormRequest
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => ['required','string' ,'email' ,'max:255' ,'unique:' . User::class],
-            'username' => ['required','string' ,'max:255' ,'unique:' . User::class],
             'password' => 'required|string|min:8',
             'phone_number' => 'nullable|string|max:20' ,
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
