@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
 use Exception;
@@ -67,29 +68,7 @@ try{
        }
 
 
-
-
-
- 
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////----
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -110,13 +89,13 @@ try{
 
 
     
-    public function login(array $data): array
+    public function login(LoginUserRequest $request): array
     {
+        $request->validated();  
         $user = null;
 
        try{
-      $user = User::query()->where('phone_number', '=' ,$data['phone_number'])->firstOrFail();
-
+      $user = User::query()->where('phone_number', '=' ,$request['phone_number'])->firstOrFail();
        }
          catch (\Exception $e){
            throw new AuthenticationException('invalid input credentials');
@@ -126,7 +105,7 @@ try{
             throw new AuthenticationException('invalid input credentials');
         }   
 
-        if (!Hash::check($data['password'], $user->password)) {
+        if (!Hash::check($request['password'], $user->password)) {
             throw new AuthenticationException('invalid input credentials');
          
         }
@@ -139,8 +118,9 @@ try{
      *
      * @return void
      */
-    public function logout(Request $request ): void
+    public function logout(LoginUserRequest $request ): void
     {
+        $request->validated() ;
           $request->user()->currentAccessToken()->delete();
           return ;
 
