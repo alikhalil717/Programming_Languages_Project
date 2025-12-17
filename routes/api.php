@@ -19,6 +19,7 @@ Route::post('resend-verification', [\App\Http\Controllers\AuthController::class,
 
 
 //! User Routes-------------------------------------------------------------------------------------------------
+//TODO
 Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/user/apartments', [\App\Http\Controllers\UserApartmentController::class, 'index']);

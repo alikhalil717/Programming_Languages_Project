@@ -5,7 +5,8 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Models\User  ;
 use phpDocumentor\Reflection\PseudoTypes\True_;
-
+use  Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 class CreateUserRequest extends FormRequest
 {
     /**
@@ -35,5 +36,17 @@ class CreateUserRequest extends FormRequest
             'personal_id' => 'nullable|string|max:255' , 
 
         ];
+    }
+
+
+       protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $validator->errors()
+            ], 422)
+        );
     }
 }
