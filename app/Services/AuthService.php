@@ -118,9 +118,8 @@ try{
      *
      * @return void
      */
-    public function logout(LoginUserRequest $request ): void
+    public function logout(Request $request ): void
     {
-        $request->validated() ;
           $request->user()->currentAccessToken()->delete();
           return ;
 
