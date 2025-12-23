@@ -5,7 +5,6 @@
 @section('content')
 <h1 class="text-3xl font-bold mb-6">Users Management</h1>
 
-<!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white p-4 rounded-xl shadow border-t-4 border-indigo-500">
         <p class="text-sm text-gray-500">Total Users</p>
@@ -25,10 +24,8 @@
     </div>
 </div>
 
-<!-- Search and Filters -->
 <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
     <div class="flex flex-col md:flex-row gap-4">
-        <!-- Search -->
         <div class="flex-1">
             <div class="relative">
                 <input type="text"
@@ -39,7 +36,6 @@
             </div>
         </div>
 
-        <!-- Filters -->
         <div class="flex gap-2">
             <select id="role-filter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">All Roles</option>
@@ -68,15 +64,12 @@
     </div>
 </div>
 
-<!-- Users Table -->
 <div class="bg-white p-6 rounded-xl shadow-lg">
-    <!-- Loading -->
     <div id="loading" class="text-center py-8">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
         <p class="mt-2 text-gray-500">Loading users...</p>
     </div>
 
-    <!-- Error -->
     <div id="error" class="hidden bg-red-50 text-red-700 p-4 rounded-lg mb-4">
         <p id="error-message"></p>
         <button onclick="loadUsers()" class="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
@@ -84,7 +77,6 @@
         </button>
     </div>
 
-    <!-- Users Table Content -->
     <div id="users-content" class="hidden">
         <div class="overflow-x-auto">
             <table class="w-full min-w-full">
@@ -101,12 +93,10 @@
                     </tr>
                 </thead>
                 <tbody id="users-body">
-                    <!-- Will be filled with data -->
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination -->
         <div id="pagination" class="mt-6 flex justify-between items-center hidden">
             <div class="text-sm text-gray-600" id="pagination-info"></div>
             <div class="flex gap-2">
@@ -121,7 +111,6 @@
             </div>
         </div>
 
-        <!-- No Results -->
         <div id="no-results" class="text-center p-8 hidden">
             <div class="inline-block p-4 bg-gray-100 rounded-full mb-3">
                 <i class="fas fa-users text-gray-400 text-2xl"></i>
@@ -131,7 +120,6 @@
     </div>
 </div>
 
-<!-- User Details Modal -->
 <div id="user-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
         <div class="p-6">
@@ -143,7 +131,6 @@
             </div>
 
             <div id="user-details-content" class="max-h-[70vh] overflow-y-auto">
-                <!-- Will be filled with data -->
             </div>
 
             <div class="mt-6 flex justify-end gap-3">
@@ -156,7 +143,6 @@
 </div>
 
 <script>
-// 🔧 **First: Define fetchData function - should be the first function in the script**
 async function fetchData(endpoint, options = {}) {
     try {
         const token = localStorage.getItem('admin_token');
@@ -168,11 +154,9 @@ async function fetchData(endpoint, options = {}) {
             return { success: false, message: 'Unauthorized' };
         }
 
-        // Build API URL
         const apiUrl = `/api/admin/${endpoint}`;
         console.log('📡 Requesting data from:', apiUrl);
 
-        // Set headers
         const headers = {
             'Authorization': `Bearer ${token}`,
             'Accept': 'application/json',
@@ -180,23 +164,19 @@ async function fetchData(endpoint, options = {}) {
             ...options.headers
         };
 
-        // Set fetch options
         const fetchOptions = {
             method: options.method || 'GET',
             headers: headers,
             ...options
         };
 
-        // If there's a body, convert to JSON
         if (options.body && typeof options.body !== 'string') {
             fetchOptions.body = JSON.stringify(options.body);
         }
 
-        // Make request
         const response = await fetch(apiUrl, fetchOptions);
         console.log('📊 Response status:', response.status, response.statusText);
 
-        // Handle common errors
         if (response.status === 401) {
             localStorage.removeItem('admin_token');
             localStorage.removeItem('admin_user');
@@ -212,7 +192,6 @@ async function fetchData(endpoint, options = {}) {
             };
         }
 
-        // Try to parse JSON
         let data;
         try {
             data = await response.json();
@@ -236,7 +215,6 @@ async function fetchData(endpoint, options = {}) {
     }
 }
 
-// 🔧 **Second: Helper variables and functions**
 let currentPage = 1;
 let totalPages = 1;
 
@@ -249,7 +227,6 @@ function formatDate(dateString) {
 function getProfilePictureUrl(profilePicture) {
     if (!profilePicture) return null;
 
-    // Check if profile_picture is an object with image_path property
     if (typeof profilePicture === 'object' && profilePicture !== null) {
         if (profilePicture.image_path) {
             return profilePicture.image_path.startsWith('http') ?
@@ -258,7 +235,6 @@ function getProfilePictureUrl(profilePicture) {
         }
     }
 
-    // Check if it's a string
     if (typeof profilePicture === 'string' && profilePicture.trim() !== '') {
         return profilePicture.startsWith('http') ?
             profilePicture :
@@ -268,11 +244,9 @@ function getProfilePictureUrl(profilePicture) {
     return null;
 }
 
-// 🔧 NEW FUNCTION: Get personal ID URL
 function getPersonalIdUrl(personalId) {
     if (!personalId) return null;
 
-    // Check if personal_id is an object with image_path property
     if (typeof personalId === 'object' && personalId !== null) {
         if (personalId.image_path) {
             return personalId.image_path.startsWith('http') ?
@@ -281,7 +255,6 @@ function getPersonalIdUrl(personalId) {
         }
     }
 
-    // Check if it's a string
     if (typeof personalId === 'string' && personalId.trim() !== '') {
         return personalId.startsWith('http') ?
             personalId :
@@ -360,13 +333,11 @@ function getIdStatusText(status) {
     }
 }
 
-// 🔧 **Third: Main users loading function**
 async function loadUsers() {
     try {
         console.log('🚀 Starting to load users...');
         showLoading();
 
-        // Build query parameters
         let endpoint = 'users?';
         const roleFilter = document.getElementById('role-filter').value;
         const statusFilter = document.getElementById('status-filter').value;
@@ -376,8 +347,7 @@ async function loadUsers() {
         if (statusFilter) endpoint += `status=${statusFilter}&`;
         if (idStatusFilter) endpoint += `id_status=${idStatusFilter}&`;
 
-        // Fetch users data
-        const response = await fetchData(endpoint.slice(0, -1)); // Remove last '&'
+        const response = await fetchData(endpoint.slice(0, -1));
         console.log('📦 API response:', response);
 
         if (response && response.success) {
@@ -395,7 +365,6 @@ async function loadUsers() {
     }
 }
 
-// 🔧 **Fourth: Function to display users in table**
 function displayUsers(response) {
     const usersBody = document.getElementById('users-body');
     const noResults = document.getElementById('no-results');
@@ -403,7 +372,6 @@ function displayUsers(response) {
     const pagination = document.getElementById('pagination');
     const paginationInfo = document.getElementById('pagination-info');
 
-    // Check if data exists
     if (!response.users || response.users.length === 0) {
         usersContent.classList.remove('hidden');
         usersBody.innerHTML = '';
@@ -412,18 +380,14 @@ function displayUsers(response) {
         return;
     }
 
-    // Hide "no results" message and show table
     noResults.classList.add('hidden');
     usersContent.classList.remove('hidden');
 
-    // Display users
     usersBody.innerHTML = '';
     response.users.forEach((user, index) => {
-        // Get profile picture URL
         const profilePictureUrl = getProfilePictureUrl(user.profile_picture);
         const hasProfilePicture = profilePictureUrl !== null;
 
-        // Get personal ID info
         const hasPersonalId = user.personal_id && typeof user.personal_id === 'object';
         const personalIdUrl = getPersonalIdUrl(user.personal_id);
         const personalIdStatus = hasPersonalId ? (user.personal_id.status || 'pending') : 'none';
@@ -510,7 +474,6 @@ function displayUsers(response) {
         usersBody.innerHTML += row;
     });
 
-    // Setup pagination
     if (response.pagination) {
         totalPages = response.pagination.total_pages || 1;
         currentPage = response.pagination.current_page || 1;
@@ -536,13 +499,11 @@ function updateStats(users) {
     users.forEach(user => {
         if (user.status === 'active') active++;
 
-        // Check personal ID status
         if (user.personal_id && typeof user.personal_id === 'object') {
             const idStatus = user.personal_id.status || 'pending';
             if (idStatus === 'pending') pendingId++;
             if (idStatus === 'rejected') rejectedId++;
         } else {
-            // No ID uploaded - could count as pending if needed
         }
     });
 
@@ -560,7 +521,6 @@ function changePage(direction) {
     }
 }
 
-// 🔧 **Fifth: Functions to view details and change status**
 async function viewUserDetails(userId) {
     try {
         showLoading();
@@ -569,15 +529,12 @@ async function viewUserDetails(userId) {
         if (response && response.user) {
             const user = response.user;
 
-            // Get profile picture URL
             const profilePictureUrl = getProfilePictureUrl(user.profile_picture);
             const hasProfilePicture = profilePictureUrl !== null;
 
-            // Get personal ID URL
             const personalIdUrl = getPersonalIdUrl(user.personal_id);
             const hasPersonalId = personalIdUrl !== null;
 
-            // Get image path for display
             let imagePathDisplay = 'No profile picture';
             if (user.profile_picture) {
                 if (typeof user.profile_picture === 'object' && user.profile_picture.image_path) {
@@ -587,7 +544,6 @@ async function viewUserDetails(userId) {
                 }
             }
 
-            // Get personal ID path for display
             let personalIdPathDisplay = 'No ID uploaded';
             if (user.personal_id) {
                 if (typeof user.personal_id === 'object' && user.personal_id.image_path) {
@@ -597,7 +553,6 @@ async function viewUserDetails(userId) {
                 }
             }
 
-            // Get personal ID status
             let personalIdStatus = 'Not uploaded';
             let personalIdStatusClass = 'bg-gray-100 text-gray-800';
             if (user.personal_id && typeof user.personal_id === 'object') {
@@ -857,11 +812,9 @@ async function verifyUserIdentity(userId) {
     }
 }
 
-// 🔧 **Sixth: Page initialization on load**
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 Users page loaded');
 
-    // Check token
     const token = localStorage.getItem('admin_token');
     if (!token) {
         console.error('❌ No token - redirecting to login');
@@ -871,7 +824,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('✅ Token exists, loading users...');
 
-    // Setup search event listeners
     const searchInput = document.getElementById('search-input');
     let searchTimeout;
 
@@ -883,7 +835,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
-    // Setup filter event listeners
     document.getElementById('role-filter').addEventListener('change', function() {
         currentPage = 1;
         loadUsers();
@@ -899,11 +850,9 @@ document.addEventListener('DOMContentLoaded', function() {
         loadUsers();
     });
 
-    // Load users on page open
     loadUsers();
 });
 
-// 🔧 **Seventh: API test function (for debugging only)**
 async function testUsersAPI() {
     console.log('🧪 Starting users API test...');
     const token = localStorage.getItem('admin_token');
@@ -928,7 +877,6 @@ async function testUsersAPI() {
             console.log('✅ Users data:', data);
             console.log(`👥 Number of users: ${data.users ? data.users.length : 0}`);
 
-            // Debug profile pictures and personal ID
             if (data.users && data.users.length > 0) {
                 const firstUser = data.users[0];
                 console.log('📸 First user profile_picture:', firstUser.profile_picture);
@@ -961,15 +909,12 @@ async function testUsersAPI() {
     }
 }
 
-// 🔧 **Eighth: Keyboard shortcuts (for development only)**
 document.addEventListener('keydown', function(e) {
-    // Ctrl+Alt+T for API test
     if (e.ctrlKey && e.altKey && e.key === 't') {
         e.preventDefault();
         testUsersAPI();
     }
 
-    // Ctrl+R to reload users
     if (e.ctrlKey && e.key === 'r') {
         e.preventDefault();
         loadUsers();

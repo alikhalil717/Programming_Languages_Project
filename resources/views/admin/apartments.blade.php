@@ -5,7 +5,7 @@
 @section('content')
 <h1 class="text-3xl font-bold mb-6">Apartments Management</h1>
 
-<!-- Stats Cards -->
+<! Stats Cards >
 <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white p-4 rounded-xl shadow border-t-4 border-indigo-500">
         <p class="text-sm text-gray-500">Total Apartments</p>
@@ -25,10 +25,8 @@
     </div>
 </div>
 
-<!-- Search and Filters -->
 <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
     <div class="flex flex-col md:flex-row gap-4">
-        <!-- Search -->
         <div class="flex-1">
             <div class="relative">
                 <input type="text"
@@ -39,7 +37,6 @@
             </div>
         </div>
 
-        <!-- Filters -->
         <div class="flex gap-2">
             <select id="status-filter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">All Statuses</option>
@@ -50,7 +47,6 @@
 
             <select id="city-filter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <option value="">All Cities</option>
-                <!-- Will be filled with cities -->
             </select>
 
             <button onclick="loadApartments()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
@@ -60,15 +56,12 @@
     </div>
 </div>
 
-<!-- Apartments Table -->
 <div class="bg-white p-6 rounded-xl shadow-lg">
-    <!-- Loading -->
     <div id="loading" class="text-center py-8">
         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
         <p class="mt-2 text-gray-500">Loading apartments...</p>
     </div>
 
-    <!-- Error -->
     <div id="error" class="hidden bg-red-50 text-red-700 p-4 rounded-lg mb-4">
         <p id="error-message"></p>
         <button onclick="loadApartments()" class="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
@@ -76,7 +69,6 @@
         </button>
     </div>
 
-    <!-- Apartments Table Content -->
     <div id="apartments-content" class="hidden">
         <div class="overflow-x-auto">
             <table class="w-full min-w-full">
@@ -93,12 +85,10 @@
                     </tr>
                 </thead>
                 <tbody id="apartments-body">
-                    <!-- Will be filled with data -->
                 </tbody>
             </table>
         </div>
 
-        <!-- Pagination -->
         <div id="pagination" class="mt-6 flex justify-between items-center hidden">
             <div class="text-sm text-gray-600" id="pagination-info"></div>
             <div class="flex gap-2">
@@ -113,7 +103,6 @@
             </div>
         </div>
 
-        <!-- No Results -->
         <div id="no-results" class="text-center p-8 hidden">
             <div class="inline-block p-4 bg-gray-100 rounded-full mb-3">
                 <i class="fas fa-building text-gray-400 text-2xl"></i>
@@ -123,7 +112,6 @@
     </div>
 </div>
 
-<!-- Apartment Details Modal -->
 <div id="apartment-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
         <div class="p-6">
@@ -135,7 +123,6 @@
             </div>
 
             <div id="apartment-details-content">
-                <!-- Will be filled with data -->
             </div>
 
             <div class="mt-6 flex justify-end gap-3">
@@ -157,7 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadStats();
     loadCities();
 
-    // Add search event listeners
     const searchInput = document.getElementById('search-input');
     let searchTimeout;
 
@@ -169,7 +155,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
-    // Add filter event listeners
     document.getElementById('status-filter').addEventListener('change', function() {
         currentPage = 1;
         loadApartments();
@@ -187,7 +172,6 @@ async function loadStats() {
         if (response) {
             document.getElementById('total-apartments').textContent = response.apartments || 0;
 
-            // These are default values - need to modify API to return them
             document.getElementById('active-apartments').textContent = Math.floor(Math.random() * 30) + 20;
             document.getElementById('pending-apartments').textContent = Math.floor(Math.random() * 10) + 5;
             document.getElementById('rejected-apartments').textContent = Math.floor(Math.random() * 5) + 1;
@@ -199,7 +183,6 @@ async function loadStats() {
 
 async function loadCities() {
     try {
-        // You can replace this with an API endpoint to fetch cities
         cities = ['Riyadh', 'Jeddah', 'Dammam', 'Makkah', 'Madinah', 'Khobar', 'Taif', 'Buraidah'];
 
         const cityFilter = document.getElementById('city-filter');
@@ -263,7 +246,6 @@ function displayApartments(response) {
     noResults.classList.add('hidden');
     apartmentsContent.classList.remove('hidden');
 
-    // Display apartments
     apartmentsBody.innerHTML = '';
     response.apartments.forEach(apartment => {
         const row = `
@@ -323,8 +305,6 @@ function displayApartments(response) {
                                 class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm">
                             <i class="fas fa-eye ml-1"></i> View
                         </button>
-
-                        <!-- 🔧 التعديل هنا: زر Approve يظهر فقط للشقق في حالة pending -->
                         ${apartment.status === 'pending' ?
                             `<button onclick="approveApartment(${apartment.id})"
                                     class="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
@@ -333,7 +313,6 @@ function displayApartments(response) {
                             : ''
                         }
 
-                        <!-- 🔧 التعديل هنا: زر Reject يظهر فقط للشقق غير المرفوضة -->
                         ${apartment.status !== 'rejected' ?
                             `<button onclick="rejectApartment(${apartment.id})"
                                     class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
@@ -348,7 +327,6 @@ function displayApartments(response) {
         apartmentsBody.innerHTML += row;
     });
 
-    // Setup pagination
     if (response.pagination) {
         totalPages = response.pagination.total_pages || 1;
         currentPage = response.pagination.current_page || 1;
@@ -457,7 +435,6 @@ async function viewApartmentDetails(apartmentId) {
                             </div>
                         </div>
 
-                        <!-- 🔧 إضافة أزرار Actions داخل المودال أيضاً -->
                         <div class="mt-4 flex gap-3">
                             ${apartment.status === 'pending' ?
                                 `<button onclick="approveApartment(${apartment.id}); closeApartmentModal();"

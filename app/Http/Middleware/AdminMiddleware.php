@@ -10,7 +10,6 @@ class AdminMiddleware
 {
     public function handle(Request $request, Closure $next)
     {
-        // 🔧 **التشخيص: طباعة معلومات المصادقة**
         if (app()->environment('local')) {
             \Log::info('AdminMiddleware - Request Path: ' . $request->path());
             \Log::info('AdminMiddleware - User: ' . json_encode(Auth::user()));
@@ -19,10 +18,7 @@ class AdminMiddleware
             \Log::info('AdminMiddleware - Headers: ' . json_encode($request->headers->all()));
         }
 
-        // 🔧 **الحل المؤقت: تعطيل الـ Middleware مؤقتاً**
-        // return $next($request); // 🔓 قم بفك التعليق عن هذا السطر مؤقتاً
 
-        // 🔧 **التحقق من المصادقة**
         $user = $request->user('sanctum');
 
         if (!$user) {
@@ -30,7 +26,6 @@ class AdminMiddleware
             return redirect()->route('admin.login');
         }
 
-        // 🔧 **التحقق من الدور**
         if ($user->role !== 'admin') {
             \Log::warning('AdminMiddleware - User is not admin. Role: ' . $user->role);
             abort(403, 'غير مصرح بالوصول. يجب أن تكون أدمن.');

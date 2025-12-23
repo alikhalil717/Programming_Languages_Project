@@ -3,13 +3,14 @@
 use Laravel\Sanctum\Sanctum;
 
 return [
-    'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS',
+    'stateful' => explode(',', env(
+        'SANCTUM_STATEFUL_DOMAINS',
         'localhost,localhost:8000,127.0.0.1,127.0.0.1:8000,127.0.0.1:3000,::1'
     )),
 
     'guard' => ['web'],
 
-    'expiration' => 1440, // 24 ساعة
+    'expiration' => 120,
 
     'token_prefix' => env('SANCTUM_TOKEN_PREFIX', ''),
 

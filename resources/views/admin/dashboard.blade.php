@@ -5,9 +5,7 @@
 @section('content')
 <h1 class="text-3xl font-bold mb-6">System Management Dashboard</h1>
 
-<!-- Stats Cards -->
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <!-- Apartments -->
     <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-indigo-500">
         <div class="flex items-center justify-between">
             <div>
@@ -26,7 +24,6 @@
         </div>
     </div>
 
-    <!-- Users -->
     <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-green-500">
         <div class="flex items-center justify-between">
             <div>
@@ -45,7 +42,6 @@
         </div>
     </div>
 
-    <!-- Bookings -->
     <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-500">
         <div class="flex items-center justify-between">
             <div>
@@ -64,7 +60,6 @@
         </div>
     </div>
 
-    <!-- Revenue -->
     <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-purple-500">
         <div class="flex items-center justify-between">
             <div>
@@ -84,9 +79,7 @@
     </div>
 </div>
 
-<!-- Charts and Recent Activity -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- Recent Bookings -->
     <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg">
         <h2 class="text-xl font-bold mb-4">Recent Bookings</h2>
         <div class="overflow-x-auto">
@@ -110,7 +103,6 @@
         </div>
     </div>
 
-    <!-- Quick Stats -->
     <div class="bg-white p-6 rounded-xl shadow-lg">
         <h2 class="text-xl font-bold mb-4">Quick Statistics</h2>
         <div class="space-y-4">
@@ -141,7 +133,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 async function loadDashboardData() {
     try {
-        // Fetch statistics
         const statsResponse = await fetchData('stats');
         if (statsResponse) {
             document.getElementById('apartments-count').textContent = statsResponse.apartments || 0;
@@ -150,7 +141,6 @@ async function loadDashboardData() {
             document.getElementById('revenue-count').textContent = '$' + (statsResponse.revenue || 0);
         }
 
-        // Fetch recent bookings
         const bookingsResponse = await fetchData('rentals?limit=5');
         if (bookingsResponse && bookingsResponse.rentals) {
             const bookingsBody = document.getElementById('recent-bookings');
@@ -190,14 +180,12 @@ async function loadDashboardData() {
             }
         }
 
-        // Fetch quick statistics (you can add a separate API endpoint for this)
-        // These are default values for now
+
         document.getElementById('active-apartments').textContent = Math.floor(Math.random() * 50) + 30;
         document.getElementById('active-bookings').textContent = Math.floor(Math.random() * 20) + 10;
         document.getElementById('active-users').textContent = Math.floor(Math.random() * 100) + 50;
         document.getElementById('avg-price').textContent = '$' + (Math.floor(Math.random() * 200) + 100);
 
-        // Update change percentages (you can add an API endpoint for this)
         document.getElementById('apartments-change').textContent = '+' + Math.floor(Math.random() * 10) + ' apartments';
         document.getElementById('users-change').textContent = '+' + Math.floor(Math.random() * 20) + ' users';
         document.getElementById('bookings-change').textContent = '+' + Math.floor(Math.random() * 15) + ' bookings';

@@ -11,7 +11,6 @@ use App\Models\User;
 class WebAuthController extends Controller
 {
     /**
-     * Show login form
      */
     public function showLoginForm()
     {
@@ -19,7 +18,6 @@ class WebAuthController extends Controller
     }
 
     /**
-     * Handle web login
      */
     public function login(Request $request)
     {
@@ -28,26 +26,22 @@ class WebAuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Determine if login is email or username
         $field = filter_var($credentials['login'], FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-        
-        // Attempt authentication using session
+
         if (Auth::attempt([$field => $credentials['login'], 'password' => $credentials['password']], $request->remember)) {
             $request->session()->regenerate();
-            
+
             $user = Auth::user();
-            
-            // Check user status
+
             if ($user->status !== 'active') {
                 Auth::logout();
                 return back()->with('error', 'Your account is pending approval.');
             }
-            
-            // Redirect based on role
+
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
-            
+
             return redirect()->route('profile');
         }
 
@@ -57,7 +51,6 @@ class WebAuthController extends Controller
     }
 
     /**
-     * Show registration form
      */
     public function showRegisterForm()
     {
@@ -65,7 +58,6 @@ class WebAuthController extends Controller
     }
 
     /**
-     * Handle web registration
      */
     public function register(Request $request)
     {
@@ -88,13 +80,11 @@ class WebAuthController extends Controller
                 ->withInput();
         }
 
-        // Handle profile picture upload
         $profilePicturePath = null;
         if ($request->hasFile('profile_picture')) {
             $profilePicturePath = $request->file('profile_picture')->store('profile-pictures', 'public');
         }
 
-        // Create user
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -109,7 +99,6 @@ class WebAuthController extends Controller
             'role' => 'user',
         ]);
 
-        // Login user automatically
         Auth::login($user);
 
         return redirect()->route('profile')->with('success', 'Registration successful! Account pending approval.');
@@ -121,10 +110,10 @@ class WebAuthController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
+
         return redirect('/');
     }
 }

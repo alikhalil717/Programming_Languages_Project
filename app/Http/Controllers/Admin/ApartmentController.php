@@ -47,7 +47,6 @@ class ApartmentController extends Controller
             return response()->json(['message' => 'Apartment not found', 'success' => false], 404);
         }
 
-        // Assuming there's a status field, if not, you can add it
         $apartment->update(['status' => 'approved']);
 
         return response()->json(['message' => 'Apartment approved successfully', 'success' => true], 200);
@@ -61,7 +60,6 @@ class ApartmentController extends Controller
             return response()->json(['message' => 'Apartment not found', 'success' => false], 404);
         }
 
-        // Assuming there's a status field, if not, you can add it
         $apartment->update(['status' => 'rejected']);
 
         return response()->json(['message' => 'Apartment rejected successfully', 'success' => true], 200);

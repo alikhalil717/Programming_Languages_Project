@@ -62,7 +62,7 @@ class ApartmentController extends Controller
 
     public function destroy($id)
     {
-        // منطق حذف شقة معينة للمستخدم المصادق عليه
+        
     }
 
 

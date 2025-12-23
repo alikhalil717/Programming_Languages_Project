@@ -169,7 +169,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadMessages();
     loadMessageStats();
 
-    // Add search event listeners
     const searchInput = document.getElementById('search-input');
     let searchTimeout;
 
@@ -181,7 +180,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
-    // Add filter event listeners
     document.getElementById('status-filter').addEventListener('change', function() {
         currentPage = 1;
         loadMessages();
@@ -195,7 +193,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 async function loadMessageStats() {
     try {
-        // These are default values - need to modify API to return them
         document.getElementById('total-messages').textContent = Math.floor(Math.random() * 100) + 50;
         document.getElementById('new-messages').textContent = Math.floor(Math.random() * 20) + 5;
         document.getElementById('replied-messages').textContent = Math.floor(Math.random() * 60) + 30;
@@ -254,7 +251,6 @@ function displayMessages(response) {
     noResults.classList.add('hidden');
     messagesContent.classList.remove('hidden');
 
-    // Display messages
     messagesBody.innerHTML = '';
     response.messages.forEach(message => {
         const row = `
@@ -313,7 +309,6 @@ function displayMessages(response) {
         messagesBody.innerHTML += row;
     });
 
-    // Setup pagination
     if (response.pagination) {
         totalPages = response.pagination.total_pages || 1;
         currentPage = response.pagination.current_page || 1;
@@ -431,7 +426,6 @@ async function viewMessageDetails(messageId) {
             document.getElementById('message-details-content').innerHTML = detailsHtml;
             document.getElementById('message-modal').classList.remove('hidden');
 
-            // Mark message as read
             await markAsRead(messageId);
 
         }
@@ -447,7 +441,7 @@ async function markAsRead(messageId) {
         await fetchData(`messages/${messageId}/read`, {
             method: 'POST'
         });
-        loadMessages(); // Reload list to update status
+        loadMessages();
     } catch (error) {
         console.error('Error marking message as read:', error);
     }

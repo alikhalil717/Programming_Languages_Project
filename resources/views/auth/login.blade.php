@@ -48,7 +48,6 @@
     </div>
 
     <script>
-        // 🔧 **Final Solution: Use Session instead of Token for Web routes**
         document.addEventListener('DOMContentLoaded', function() {
             const loginForm = document.getElementById('loginForm');
             const submitBtn = document.getElementById('submitBtn');
@@ -56,7 +55,6 @@
 
             let isProcessing = false;
 
-            // 🔧 **1. Don't check for token - let user login manually**
 
             loginForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
@@ -67,7 +65,6 @@
                 const phoneNumber = document.getElementById('phone_number').value.trim();
                 const password = document.getElementById('password').value;
 
-                // Simple validation
                 if (!phoneNumber || !password) {
                     Swal.fire({
                         icon: 'warning',
@@ -78,13 +75,11 @@
                     return;
                 }
 
-                // Change button state
                 submitBtn.disabled = true;
                 btnText.textContent = 'Logging in...';
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin ml-2"></i> Logging in...';
 
                 try {
-                    // 🔧 **2. Send login request**
                     console.log('Logging in...');
                     const response = await fetch('/api/admin/login', {
                         method: 'POST',
@@ -102,16 +97,13 @@
                     console.log('API response:', data);
 
                     if (data.success) {
-                        // 🔧 **3. Solution: After API login, create Session for Web**
                         await createWebSession(data.token);
 
-                        // 🔧 **4. Save token for future API requests**
                         if (data.token) {
                             localStorage.setItem('admin_token', data.token);
                             console.log('Token saved for API');
                         }
 
-                        // 🔧 **5. Immediate redirect to Dashboard**
                         Swal.fire({
                             icon: 'success',
                             title: 'Success',
@@ -143,17 +135,14 @@
                 }
             });
 
-            // 🔧 **Function to create Session for Web routes**
             async function createWebSession(apiToken) {
                 try {
                     console.log('Creating Web Session...');
 
-                    // 🔧 **Option 1: Use CSRF token for Session**
                     const csrfResponse = await fetch('/sanctum/csrf-cookie', {
                         credentials: 'include'
                     });
 
-                    // 🔧 **Option 2: Send token for Session**
                     const sessionResponse = await fetch('/api/admin/create-session', {
                         method: 'POST',
                         headers: {
