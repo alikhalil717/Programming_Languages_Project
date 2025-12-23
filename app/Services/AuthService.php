@@ -39,15 +39,14 @@ class AuthService
             'phone_number' => $request['phone_number'] ,
             'date_of_birth' => $request['date_of_birth'] ,
             'personal_id' => $request['personal_id'] ,
-           
+
         ]);
 
-///////////////////////////////////////////
-  
+
  if ($request->hasFile('profile_picture')) {
                   //  $user = $request->user();
-          
-           
+
+
 try{
                   $path = $request->file('profile_picture')->store('profile_pictures', 'public');
                      $user->profile_picture()->create([
@@ -63,15 +62,15 @@ try{
             ], 422)
         );
 }
-            
-          
+
+
        }
 
-        
+
  if ($request->hasFile('personal_id')) {
                   //  $user = $request->user();
-          
-           
+
+
 try{
                   $path = $request->file('personal_id')->store('personal_ids', 'public');
                      $user->personal_id()->create([
@@ -87,11 +86,10 @@ try{
             ], 422)
         );
 }
-            
-          
+
+
        }
 
-///////////////////////////////////////////////////////////////////////////////----
 
 
 
@@ -111,10 +109,10 @@ try{
 
 
 
-    
+
     public function login(LoginUserRequest $request): array
     {
-        $request->validated();  
+        $request->validated();
         $user = null;
 
        try{
@@ -129,7 +127,7 @@ try{
             ], 422)
         );
          }
-         
+
 
         if (!Hash::check($request['password'], $user->password)) {
 
@@ -140,10 +138,10 @@ try{
                 'errors' => ['password'=> 'wrong password' ] ,
             ], 422)
         );
-         
+
         }
         if (!($user->status==='active')){
- 
+
             throw new HttpResponseException(
             response()->json([
                 'success' => false,
@@ -155,7 +153,7 @@ try{
 
        $token = $user->createToken('token')->plainTextToken;
           $data= [ 'token' => $token, 'massage' => 'User logged in successfully' ,'success' => true ];
-        return $data;     
+        return $data;
     }
     /**
      * Logout the authenticated user.
@@ -178,18 +176,18 @@ try{
         $user->last_name = $request->input('last_name', $user->last_name);
         $user->phone_number = $request->input('phone_number', $user->phone_number);
         $user->date_of_birth = $request->input('date_of_birth', $user->date_of_birth);
-  
+
 
         if ($request->hasFile('profile_picture')) {
                   //  $user = $request->user();
-            if($user->profile_picture){  
+            if($user->profile_picture){
                         $image = $user->profile_picture;
-                        
+
                 // Delete old profile picture
 
             try {
             $imagepath= $image->image_path;
-          
+
           $deleted = false;
             // if (File::exists($path)) {
             //     File::delete($path);
@@ -198,13 +196,13 @@ try{
             // }
 
             Storage::disk('public')->delete(  $imagepath);
-        
+
           if (!$deleted) {
             \Log::warning("Image file not found in any path for UserID: " . $user->id);
           }
-        
+
           $image->delete();
-        
+
           $path = $request->file('profile_picture')->store('profile_pictures', 'public');
                      $user->profile_picture()->create([
                         'user_id' => $user->id,
@@ -231,7 +229,7 @@ try{
                         'user_id' => $user->id,
                         'image_path' => $path]);
             }
-          
+
        }
           $user->save();
 
@@ -260,7 +258,7 @@ public function changePassword(Request $request)
 
     public function verifyEmail(Request $request)
     {
-    
+
 
 
     }

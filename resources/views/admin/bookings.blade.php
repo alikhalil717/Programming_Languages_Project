@@ -156,7 +156,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadBookings();
     loadBookingStats();
 
-    // Setup default dates
     const today = new Date();
     const lastMonth = new Date();
     lastMonth.setMonth(today.getMonth() - 1);
@@ -164,7 +163,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('date-from').value = lastMonth.toISOString().split('T')[0];
     document.getElementById('date-to').value = today.toISOString().split('T')[0];
 
-    // Add search event listeners
     const searchInput = document.getElementById('search-input');
     let searchTimeout;
 
@@ -176,7 +174,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500);
     });
 
-    // Add filter event listeners
     document.getElementById('status-filter').addEventListener('change', function() {
         currentPage = 1;
         loadBookings();
@@ -200,7 +197,6 @@ async function loadBookingStats() {
             document.getElementById('total-bookings').textContent = response.bookings || 0;
             document.getElementById('total-revenue').textContent = '$' + (response.revenue || 0);
 
-            // These are default values - need to modify API to return them
             document.getElementById('confirmed-bookings').textContent = Math.floor(Math.random() * 50) + 30;
             document.getElementById('pending-bookings').textContent = Math.floor(Math.random() * 20) + 10;
         }
@@ -259,7 +255,6 @@ function displayBookings(response) {
     noResults.classList.add('hidden');
     bookingsContent.classList.remove('hidden');
 
-    // Display bookings
     bookingsBody.innerHTML = '';
     response.rentals.forEach(booking => {
         const row = `
@@ -347,7 +342,6 @@ function displayBookings(response) {
         bookingsBody.innerHTML += row;
     });
 
-    // Setup pagination
     if (response.pagination) {
         totalPages = response.pagination.total_pages || 1;
         currentPage = response.pagination.current_page || 1;

@@ -187,7 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadAdminInfo();
     startUptimeCounter();
 
-    // Setup forms
     document.getElementById('general-settings').addEventListener('submit', saveGeneralSettings);
     document.getElementById('system-settings').addEventListener('submit', saveSystemSettings);
 });
@@ -199,7 +198,6 @@ async function loadSettings() {
         if (response && response.settings) {
             const settings = response.settings;
 
-            // Fill forms
             document.getElementById('site_name').value = settings.site_name || '';
             document.getElementById('site_description').value = settings.site_description || '';
             document.getElementById('site_email').value = settings.site_email || '';
@@ -335,7 +333,7 @@ function startUptimeCounter() {
     }
 
     updateUptime();
-    setInterval(updateUptime, 60000); // Update every minute
+    setInterval(updateUptime, 60000);  
 }
 
 async function clearCache() {
@@ -373,7 +371,6 @@ async function backupDatabase() {
         if (response && response.success) {
             showSuccess('Backup created successfully');
 
-            // If there's a download link
             if (response.download_url) {
                 window.open(response.download_url, '_blank');
             }
@@ -389,8 +386,7 @@ async function backupDatabase() {
 
 function viewLogs() {
     alert('This feature is under development');
-    // You can redirect to system logs page
-    // window.location.href = '/admin/system/logs';
+
 }
 
 function formatDate(dateString) {
@@ -400,14 +396,12 @@ function formatDate(dateString) {
 }
 
 function showLoading() {
-    // You can add a loading indicator
     const button = event?.target;
     if (button) {
         const originalText = button.innerHTML;
         button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
         button.disabled = true;
 
-        // Restore original text after 3 seconds (in case of error)
         setTimeout(() => {
             button.innerHTML = originalText;
             button.disabled = false;
@@ -416,7 +410,6 @@ function showLoading() {
 }
 
 function hideLoading() {
-    // Restore button states
     const buttons = document.querySelectorAll('button[disabled]');
     buttons.forEach(button => {
         button.disabled = false;

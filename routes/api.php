@@ -5,19 +5,15 @@ use Illuminate\Support\Facades\Route;
 
 //! Admin Routes -----------------------------------------------------------------
 Route::prefix('admin')->group(function () {
-    // تسجيل دخول الأدمن
     Route::post('/login', [\App\Http\Controllers\Admin\AuthAdminController::class, 'login']);
 
-    // CSRF Cookie
     Route::get('/csrf-cookie', function () {
         return response()->json([
             'csrf_token' => csrf_token()
         ]);
     });
 });
-// 🔧 **إضافة route لإنشاء Session للـ Web**
 Route::middleware('auth:sanctum')->post('/admin/create-session', function (Request $request) {
-    // إنشاء Session للمستخدم
     Auth::guard('web')->login($request->user());
 
     return response()->json([
@@ -29,7 +25,6 @@ Route::middleware('auth:sanctum')->post('/admin/create-session', function (Reque
 //! Admin Protected Routes -------------------------------------------------------
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
 
-    // Profile
     Route::get('/profile', [\App\Http\Controllers\Admin\AuthAdminController::class, 'profile']);
 
     //! User Management
@@ -67,7 +62,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/update-profile', [\App\Http\Controllers\AuthController::class, 'updateProfile']);
     Route::post('/change-password', [\App\Http\Controllers\AuthController::class, 'changePassword']);
 
-    // User Apartments
     Route::get('/user/apartments', [\App\Http\Controllers\ApartmentController::class, 'index']);
     Route::post('/user/apartments', [\App\Http\Controllers\ApartmentController::class, 'store']);
     Route::get('/user/apartments/{id}', [\App\Http\Controllers\ApartmentController::class, 'show']);

@@ -69,6 +69,5 @@ class AuthController extends Controller
 
     public function resendVerification(Request $request)
     {
-        // Logic to resend email verification
     }
 }
