@@ -21,7 +21,18 @@ class Apartment extends Model
         'price_per_night',
         'number_of_bedrooms',
         'number_of_bathrooms',
+        'status',
     ];
+
+
+
+    public function getImageUrlAttribute()
+    {
+        if ($this->image_path) {
+            return asset('storage/' . $this->image_path);
+        }
+        return null;
+    }
     public function owner()
     {
         return $this->belongsTo(User::class, 'owner_id');

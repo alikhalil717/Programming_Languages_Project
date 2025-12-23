@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('personalids', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('personal_id_number')->unique();
             $table->string('image_path');
             $table->timestamps();
         });

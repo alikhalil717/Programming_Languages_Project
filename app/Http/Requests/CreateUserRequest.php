@@ -29,10 +29,10 @@ class CreateUserRequest extends FormRequest
             'last_name' => 'required|string|max:255',
             'email' => ['required','string' ,'email' ,'max:255' ,'unique:' . User::class],
             'password' => 'required|string|min:8',
-            'phone_number' => 'nullable|string|max:20' ,
-            'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'date_of_birth' => 'nullable|date',
-            'personal_id' => 'nullable|string|max:255' , 
+            'phone_number' => 'required|string|max:20' ,
+            'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'date_of_birth' => 'required|date',
+            'personal_id' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048' , 
 
         ];
     }
