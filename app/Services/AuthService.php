@@ -67,6 +67,29 @@ try{
           
        }
 
+        
+ if ($request->hasFile('personal_id')) {
+                  //  $user = $request->user();
+          
+           
+try{
+                  $path = $request->file('personal_id')->store('personal_ids', 'public');
+                     $user->personal_id()->create([
+                        'user_id' => $user->id,
+                        'image_path' => $path]);
+}catch( IOException $e){
+
+   throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Files errors',
+                'errors' => ['personal_id'=> 'faild to save your photo' ] ,
+            ], 422)
+        );
+}
+            
+          
+       }
 
 ///////////////////////////////////////////////////////////////////////////////----
 
@@ -98,17 +121,38 @@ try{
       $user = User::query()->where('phone_number', '=' ,$request['phone_number'])->firstOrFail();
        }
          catch (\Exception $e){
-           throw new AuthenticationException('invalid input credentials');
+           throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'invalid input',
+                'errors' => ['phone_number'=> 'faild to find the number' ] ,
+            ], 422)
+        );
          }
-        
-        if (!$user) {
-            throw new AuthenticationException('invalid input credentials');
-        }   
+         
 
         if (!Hash::check($request['password'], $user->password)) {
-            throw new AuthenticationException('invalid input credentials');
+
+            throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'wrong password ',
+                'errors' => ['password'=> 'wrong password' ] ,
+            ], 422)
+        );
          
         }
+        if (!($user->status==='active')){
+ 
+            throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'unactive User',
+            ], 422)
+        );
+
+        }
+
        $token = $user->createToken('token')->plainTextToken;
           $data= [ 'token' => $token, 'massage' => 'User logged in successfully' ,'success' => true ];
         return $data;     
@@ -222,5 +266,3 @@ public function changePassword(Request $request)
     }
 
 }
-   
-   

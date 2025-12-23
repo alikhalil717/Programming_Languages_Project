@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable , HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -19,18 +19,18 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-       
-    
+
+
         'first_name',
         'last_name',
         'email',
         'password',
+        'wallet',
         'phone_number',
         'date_of_birth',
-        'personal_id',
         'role',
         'status',
-        
+
     ];
 
     /**
@@ -40,21 +40,28 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-      
-    ];
-public function delete(){
 
-    $this->notifications()->delete();
-    $this->profile_picture()->delete();
-    $this->apartments()->delete();
-    $this->reviews()->delete();
-    $this->favorites()->delete();
-    $this->adminActions()->delete();
-    $this->targetAdminActions()->delete();
-    $this->rentals()->delete();
-    $this->personalId()->delete();
-    parent::delete();
-}
+    ];
+    public function delete()
+    {
+        $profileImage = $this->profile_picture;
+        if ($profileImage) {
+            $profileImage->delete();
+        }
+        $personalId = $this->personal_id;
+        if ($personalId) {
+            $personalId->delete();
+        }
+        $this->notifications()->delete();
+        $this->apartments()->delete();
+        $this->reviews()->delete();
+        $this->favorites()->delete();
+        $this->adminActions()->delete();
+        $this->targetAdminActions()->delete();
+        $this->rentals()->delete();
+        $this->personal_id()->delete();
+        parent::delete();
+    }
     public function notifications()
     {
         return $this->hasMany(Notification::class, 'user_id');
@@ -62,10 +69,10 @@ public function delete(){
     public function profile_picture()
     {
         return $this->hasOne(Profileimage::class, 'user_id');
-    }   
+    }
 
 
-public function apartments()
+    public function apartments()
     {
         return $this->hasMany(Apartment::class, 'owner_id');
     }
@@ -89,13 +96,13 @@ public function apartments()
     {
         return $this->hasMany(Rental::class, 'renter_id');
     }
-    public function personalId()
+    public function personal_id()
     {
         return $this->hasOne(Personalid::class, 'user_id');
     }
 
 
-    
+
 
 
 
@@ -104,7 +111,7 @@ public function apartments()
      *
      * @var array<string, string>
      */
-    
+
 
 
 

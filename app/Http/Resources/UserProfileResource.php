@@ -20,11 +20,10 @@ class UserProfileResource extends JsonResource
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'email' => $this->email,
-            'username' => $this->username,
             'phone_number' => $this->phone_number,
             'profile_picture' => User::find($this->id)->profile_picture,
+            'personal_id' =>User::find($this->id)->personal_id,
             'date_of_birth' => $this->date_of_birth,
-            'personal_id' => $this->personal_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

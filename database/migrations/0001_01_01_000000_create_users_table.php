@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('email')->unique(); 
             $table->string('password');
+            $table->float('wallet')->default(0.00) ;
             $table->string('phone_number')->nullable();
             $table->date('date_of_birth')->nullable();  
-            $table->string('personal_id')->nullable();
             $table->string('role')->default('user');
             $table->string('status')->default('pending');
             $table->timestamp('email_verified_at')->nullable();
