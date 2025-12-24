@@ -1,5 +1,5 @@
 <?php
-namespace App\Services;
+namespace App\Services\Admin;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\UpdateProfileRequest;

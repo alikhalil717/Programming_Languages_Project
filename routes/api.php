@@ -2,10 +2,22 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use \App\Http\Controllers\Admin\AuthAdminController;
+use \App\Http\Controllers\Admin\ApartmentController;
+use \App\Http\Controllers\Admin\RentalController;
+use \App\Http\Controllers\Admin\WebAuthController;
+use \App\Http\Controllers\Admin\PageController;
+use \App\Http\Controllers\User\RentalController as UserRentalController;
+use \App\Http\Controllers\User\ApartmentController as UserApartmentController;
+use \App\Http\Controllers\User\FavoriteController;
+
+use \App\Http\Controllers\UserAuth\AuthController;
+use Illuminate\Support\Facades\Auth;
+
 
 //! Admin Routes -----------------------------------------------------------------
 Route::prefix('admin')->group(function () {
-    Route::post('/login', [\App\Http\Controllers\Admin\AuthAdminController::class, 'login']);
+    Route::post('/login', [AuthAdminController::class, 'login']);
 
     Route::get('/csrf-cookie', function () {
         return response()->json([
@@ -18,53 +30,65 @@ Route::middleware('auth:sanctum')->post('/admin/create-session', function (Reque
 
     return response()->json([
         'success' => true,
-        'message' => 'تم إنشاء Session للـ Web'
+        'message' => 'Admin session created successfully.'
     ]);
 });
 
 //! Admin Protected Routes -------------------------------------------------------
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
 
-    Route::get('/profile', [\App\Http\Controllers\Admin\AuthAdminController::class, 'profile']);
+    Route::get('/profile', [AuthAdminController::class, 'profile']);
 
     //! User Management
-    Route::get('/users', [\App\Http\Controllers\Admin\AuthAdminController::class, 'listUsers']);
-    Route::get('/users/{id}', [\App\Http\Controllers\Admin\AuthAdminController::class, 'showUser']);
-    Route::delete('/users/{id}', [\App\Http\Controllers\Admin\AuthAdminController::class, 'deleteUser']);
-    Route::get('/reject-user/{id}', [\App\Http\Controllers\Admin\AuthAdminController::class, 'rejectUser']);
-    Route::get('/approve-user/{id}', [\App\Http\Controllers\Admin\AuthAdminController::class, 'approveUser']);
-
+    Route::get('/users', [AuthAdminController::class, 'listUsers']);
+    Route::get('/users/{id}', [AuthAdminController::class, 'showUser']);
+    Route::delete('/users/{id}', [AuthAdminController::class, 'deleteUser']);
+    Route::get('/reject-user/{id}', [AuthAdminController::class, 'rejectUser']);
+    Route::get('/approve-user/{id}', [AuthAdminController::class, 'approveUser']);
+    Route::post('/users/{id}/charge-wallet', [AuthAdminController::class, 'chargeWallet']);
     //! Stats and Reports
-    Route::get('/stats', [\App\Http\Controllers\Admin\AuthAdminController::class, 'getStats']);
-    Route::get('/reports', [\App\Http\Controllers\Admin\AuthAdminController::class, 'viewReports']);
+    Route::get('/stats', [AuthAdminController::class, 'getStats']);
+    Route::get('/reports', [AuthAdminController::class, 'viewReports']);
 
     //! Apartment Management
-    Route::get('/apartments', [\App\Http\Controllers\Admin\ApartmentController::class, 'index']);
-    Route::get('/apartments/{id}', [\App\Http\Controllers\Admin\ApartmentController::class, 'show']);
-    Route::delete('/apartments/{id}', [\App\Http\Controllers\Admin\ApartmentController::class, 'destroy']);
-    Route::post('/apartments/{id}/approve', [\App\Http\Controllers\Admin\ApartmentController::class, 'approve']);
-    Route::post('/apartments/{id}/reject', [\App\Http\Controllers\Admin\ApartmentController::class, 'reject']);
-
+    Route::get('/apartments', [ApartmentController::class, 'index']);
+    Route::get('/apartments/{id}', [ApartmentController::class, 'show']);
+    Route::delete('/apartments/{id}', [ApartmentController::class, 'destroy']);
+    Route::post('/apartments/{id}/approve', [ApartmentController::class, 'approve']);
+    Route::post('/apartments/{id}/reject', [ApartmentController::class, 'reject']);
     //! Rental Management
-    Route::get('/rentals', [\App\Http\Controllers\Admin\RentalController::class, 'index']);
-    Route::get('/rentals/{id}', [\App\Http\Controllers\Admin\RentalController::class, 'show']);
-    Route::delete('/rentals/{id}', [\App\Http\Controllers\Admin\RentalController::class, 'destroy']);
-    Route::post('/rentals/{id}/approve', [\App\Http\Controllers\Admin\RentalController::class, 'approve']);
-    Route::post('/rentals/{id}/reject', [\App\Http\Controllers\Admin\RentalController::class, 'reject']);
+    Route::get('/rentals', [RentalController::class, 'index']);
+    Route::get('/rentals/{id}', [RentalController::class, 'show']);
+    Route::delete('/rentals/{id}', [RentalController::class, 'destroy']);
+    Route::post('/rentals/{id}/approve', [RentalController::class, 'approve']);
+    Route::post('/rentals/{id}/reject', [RentalController::class, 'reject']);
 });
 
+
+
 //! Regular User Auth Routes ----------------------------------------------------
-Route::post('/register', [\App\Http\Controllers\AuthController::class, 'register']);
-Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/profile', [\App\Http\Controllers\AuthController::class, 'profile']);
-    Route::post('/update-profile', [\App\Http\Controllers\AuthController::class, 'updateProfile']);
-    Route::post('/change-password', [\App\Http\Controllers\AuthController::class, 'changePassword']);
-
-    Route::get('/user/apartments', [\App\Http\Controllers\ApartmentController::class, 'index']);
-    Route::post('/user/apartments', [\App\Http\Controllers\ApartmentController::class, 'store']);
-    Route::get('/user/apartments/{id}', [\App\Http\Controllers\ApartmentController::class, 'show']);
-    Route::put('/user/apartments/{id}', [\App\Http\Controllers\ApartmentController::class, 'update']);
-    Route::delete('/user/apartments/{id}', [\App\Http\Controllers\ApartmentController::class, 'destroy']);
+    //! User Auth Routes
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::post('/update-profile', [AuthController::class, 'updateProfile']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    //! User Apartment Routes
+    Route::get('/user/apartments', [UserApartmentController::class, 'index']);
+    Route::post('/user/apartments', [UserApartmentController::class, 'store']);
+    Route::get('/user/apartments/{id}', [UserApartmentController::class, 'show']);
+    Route::put('/user/apartments/{id}', [UserApartmentController::class, 'update']);
+    Route::delete('/user/apartments/{id}', [UserApartmentController::class, 'destroy']);
+    //! User Rental Routes
+    Route::get('/user/rentals', [UserRentalController::class, 'index']);
+    Route::get('/user/rentals/{id}', [UserRentalController::class, 'show']);
+    Route::get('/user/apartments/{id}/availability', [UserRentalController::class, 'checkAvailability']);
+    Route::post('/user/apartments/{id}/rent', [UserRentalController::class, 'rent']);
+    //! User Favorite Routes
+    Route::get('/user/favorites', [FavoriteController::class, 'index']);
+    Route::post('/user/favorites/{apartmentId}', [FavoriteController::class, 'add']);
+    Route::delete('/user/favorites/{apartmentId}', [FavoriteController::class, 'remove']);
 });

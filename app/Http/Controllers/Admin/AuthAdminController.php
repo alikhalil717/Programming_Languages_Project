@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Routing\Controllers\Middleware;
-use App\Services\AdminService;
+use App\Services\Admin\AdminService;
 class AuthAdminController extends Controller
 {
     private AdminService $adminService;
@@ -83,14 +83,14 @@ class AuthAdminController extends Controller
     {
         $user = User::find($id);
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'User not found', 'success' => false], 404);
         }
         if ($user->role == 'admin') {
-            return response()->json(['message' => 'Cannot delete admin users'], 403);
+            return response()->json(['message' => 'Cannot delete admin users', 'success' => false], 403);
         }
         $user->delete();
 
-        return response()->json(['message' => 'User deleted successfully'], 200);
+        return response()->json(['message' => 'User deleted successfully', 'success' => true], 200);
     }
     public function approveUser($id)
     {
@@ -138,6 +138,29 @@ class AuthAdminController extends Controller
             'bookings' => $bookings,
             'users' => $users,
             'revenue' => $revenue,
+        ], 200);
+    }
+
+    public function chargeWallet(Request $request, $id)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1',
+        ]);
+
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'User not found', 'success' => false], 404);
+        }
+        if ($user->status !== 'active') {
+            return response()->json(['message' => 'Cannot charge wallet of inactive user', 'success' => false], 403);
+        }
+        $user->wallet += $request->input('amount');
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Wallet charged successfully',
+            'wallet_balance' => $user->wallet
         ], 200);
     }
 }

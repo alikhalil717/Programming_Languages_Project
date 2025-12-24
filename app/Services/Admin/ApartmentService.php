@@ -1,5 +1,5 @@
 <?php
-namespace App\Services;
+namespace App\Services\Admin;
 use App\Http\Requests\ApartmentRequest;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\LoginUserRequest;
@@ -29,7 +29,7 @@ class ApartmentService
         $validatedData = $request->validated();
         try {
 
-          
+
             $apartment = Apartment::create([
                 'owner_id' => $user->id,
                 'title' => $validatedData['title'],

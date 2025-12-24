@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\UserAuth;
 
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use Illuminate\Http\Request;
-use App\Services\AuthService;
+use App\Services\UserAuth\AuthService;
 use App\Http\Resources\UserProfileResource;
+use App\Http\Controllers\Controller;
+
 class AuthController extends Controller
 {
     private AuthService $authService;
