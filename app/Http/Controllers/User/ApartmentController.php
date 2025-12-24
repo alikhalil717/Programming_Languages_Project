@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Requests\ApartmentRequest;
+use App\Http\Requests\IndexApartmentRequest;
 use Illuminate\Http\Request;
 use App\Models\Apartment;
 use Illuminate\Support\Facades\Auth;
@@ -21,15 +22,10 @@ class ApartmentController extends Controller
         $this->apartmentService = $apartmentService;
     }
 
-    public function index(Request $request)
+    public function index(IndexApartmentRequest $request)
     {
-        $apartments = Apartment::with('owner', 'images')->where('status', 'approved')->get();
-        return response()->json([
-            'message' => 'Successfully retrieved user apartments.'
-            ,
-            'apartments' => $apartments,
-            'success' => true
-        ], 200);
+        $result = $this->apartmentService->filterApartments($request);
+        return response()->json($result, $result['success'] ? 200 : 422);
 
     }
 
@@ -42,19 +38,8 @@ class ApartmentController extends Controller
 
     public function show($id)
     {
-
-        $apartment = Apartment::with('owner', 'images', 'reviews')->find($id);
-        if (!$apartment) {
-            return response()->json([
-                'message' => 'Apartment not found.',
-                'success' => false
-            ], 404);
-        }
-        return response()->json([
-            'message' => 'Successfully retrieved apartment details.',
-            'apartment' => $apartment,
-            'success' => true
-        ], 200);
+        $result =$this->apartmentService->getApartmentDetails($id);
+        return response()->json($result, $result['success'] ? 200 : 422);
     }
 
     public function update(Request $request, $id)

@@ -19,7 +19,7 @@ use function Laravel\Prompts\error;
 use function PHPUnit\Framework\returnArgument;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-
+use App\Http\Resources\UserProfileResource;
 class AuthService
 {
     /**
@@ -161,11 +161,33 @@ class AuthService
      *
      * @return void
      */
-    public function logout(Request $request): void
+    public function logout(Request $request): array
     {
+        $user = $request->user();
+        if (!$user) {
+            $data = ['message' => 'No authenticated user found', 'success' => false];
+            return $data;
+        }
         $request->user()->currentAccessToken()->delete();
-        return;
 
+        return $data = ['message' => 'User logged out successfully', 'success' => true];
+
+    }
+    public function getProfile(Request $request): array
+    {
+        $user = $request->user();
+        if (!$user) {
+            return [
+                'success' => false,
+                'message' => 'No authenticated user found',
+            ];
+        }
+
+        return [
+            'success' => true,
+            'message' => 'User profile retrieved successfully',
+            'user' => new UserProfileResource($request->user()),
+        ];
     }
     public function updateProfile(UpdateProfileRequest $request)
     {
@@ -211,14 +233,16 @@ class AuthService
                     ]);
 
                     $user->save();
-
-                    return $user;
+                    return [
+                        'success' => true,
+                        'message' => 'User profile updated successfully',
+                        'user' => new UserProfileResource($user)
+                    ];
                 } catch (Exception $e) {
-                    return response()->json([
+                    return [
                         'success' => false,
-                        'message' => 'Error deleting image',
-                        'error' => $e->getMessage()
-                    ], 500);
+                        'message' => 'Failed to update profile picture: ' . $e->getMessage()
+                    ];
                 }
 
             } else {
@@ -233,7 +257,12 @@ class AuthService
         }
         $user->save();
 
-        return $user;
+        return [
+            'success' => true,
+            'message' => 'User profile updated successfully',
+            'user' => new UserProfileResource($user)
+        ];
+        ;
     }
 
     public function changePassword(Request $request)
@@ -247,13 +276,18 @@ class AuthService
         $user = $request->user();
 
         if (!Hash::check($request->input('current_password'), $user->password)) {
-            throw ValidationException::withMessages([
-                'current_password' => 'The provided password does not match your current password.',
-            ]);
+            return [
+                'success' => false,
+                'message' => 'Current password is incorrect'
+            ];
         }
 
         $user->password = Hash::make($request->input('new_password'));
         $user->save();
+        return [
+            'success' => true,
+            'message' => 'Password changed successfully'
+        ];
     }
 
     public function verifyEmail(Request $request)

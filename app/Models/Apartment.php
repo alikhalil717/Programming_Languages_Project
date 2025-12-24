@@ -24,7 +24,30 @@ class Apartment extends Model
         'status',
     ];
 
+    public function scopeFilter($query, array $filters)
+    {
 
+        $query->when($filters['city'] ?? null, function ($query) use ($filters) {
+            $query->where('city', 'like', '%' . $filters['city'] . '%');
+        });
+        $query->when($filters['min_price'] ?? null, function ($query) use ($filters) {
+            $query->where('price_per_night', '>=', $filters['min_price']);
+        });
+        $query->when($filters['max_price'] ?? null, function ($query) use ($filters) {
+            $query->where('price_per_night', '<=', $filters['max_price']);
+        });
+        $query->when($filters['state'] ?? null, function ($query) use ($filters) {
+            $query->where('state', 'like', '%' . $filters['state'] . '%');
+        });
+        $query->when($filters['number_of_bedrooms'] ?? null, function ($query) use ($filters) {
+            $query->where('number_of_bedrooms', '>=', $filters['number_of_bedrooms']);
+        });
+        $query->when($filters['number_of_bathrooms'] ?? null, function ($query) use ($filters) {
+            $query->where('number_of_bathrooms', '>=', $filters['number_of_bathrooms']);
+        });
+
+
+    }
 
     public function getImageUrlAttribute()
     {
@@ -37,14 +60,20 @@ class Apartment extends Model
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
+
+
     public function images()
     {
         return $this->hasMany(Apartmentimage::class, 'apartment_id');
     }
+
+
     public function reviews()
     {
         return $this->hasMany(Review::class, 'apartment_id');
     }
+
+    
     public function favorites()
     {
         return $this->hasMany(Favorite::class, 'apartment_id');

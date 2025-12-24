@@ -2,6 +2,7 @@
 namespace App\Services\User;
 use App\Http\Requests\ApartmentRequest;
 use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\IndexApartmentRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\Apartment;
@@ -15,6 +16,43 @@ use Illuminate\Support\Facades\File;
 class ApartmentService
 {
 
+
+    public function filterApartments(IndexApartmentRequest $request)
+    {
+        $request->validated();
+        $apartment = Apartment::with('owner', 'images')
+            ->where('status', 'approved')
+            ->filter([
+                'city' => $request->input('city'),
+                'state' => $request->input('state'),
+                'min_price' => $request->input('min_price'),
+                'max_price' => $request->input('max_price'),
+                'number_of_bedrooms' => $request->input('number_of_bedrooms'),
+                'number_of_bathrooms' => $request->input('number_of_bathrooms'),
+            ])->get();
+        return [
+            'success' => true,
+            'message' => 'Apartments retrieved successfully',
+            'apartments' => $apartment
+        ];
+
+
+    }
+    public function getApartmentDetails($id): array
+    {
+        $apartment = Apartment::with('owner', 'images')->find($id);
+        if (!$apartment || $apartment->status !== 'approved') {
+            return [
+                'success' => false,
+                'message' => 'Apartment not found or not approved'
+            ];
+        }
+        return [
+            'success' => true,
+            'message' => 'Apartment details retrieved successfully',
+            'apartment' => $apartment
+        ];
+    }
 
 
     public function createApartment(ApartmentRequest $request): array
