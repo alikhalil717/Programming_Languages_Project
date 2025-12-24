@@ -5,14 +5,13 @@ use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Admin\AuthAdminController;
 use \App\Http\Controllers\Admin\ApartmentController;
 use \App\Http\Controllers\Admin\RentalController;
-use \App\Http\Controllers\Admin\WebAuthController;
-use \App\Http\Controllers\Admin\PageController;
 use \App\Http\Controllers\User\RentalController as UserRentalController;
 use \App\Http\Controllers\User\ApartmentController as UserApartmentController;
 use \App\Http\Controllers\User\FavoriteController;
 use \App\Http\Controllers\User\ReviewController as UserReviewController; ;
 use \App\Http\Controllers\UserAuth\AuthController;
 use Illuminate\Support\Facades\Auth;
+
 //! Admin Routes -----------------------------------------------------------------
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AuthAdminController::class, 'login']);

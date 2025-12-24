@@ -4,7 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use phpDocumentor\Reflection\PseudoTypes\True_;
-
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Contracts\Validation\Validator;
 class UpdateProfileRequest extends FormRequest
 {
     /**
@@ -23,12 +24,22 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-          
+
             'first_name' => 'nullable|string|max:255|min:3 ',
             'last_name' => 'nullable|string|max:255|min:3 ',
             'phone_number' => 'nullable|min:10|string|max:20|unique:users,phone_number,' . $this->user()->phone_number . 'phone_number',
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'date_of_birth' => 'nullable|date',
         ];
+    }
+       protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(
+            response()->json([
+                'success' => false,
+                'message' => 'Validation errors',
+                'errors' => $validator->errors()
+            ], 422)
+        );
     }
 }
