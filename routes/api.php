@@ -10,11 +10,9 @@ use \App\Http\Controllers\Admin\PageController;
 use \App\Http\Controllers\User\RentalController as UserRentalController;
 use \App\Http\Controllers\User\ApartmentController as UserApartmentController;
 use \App\Http\Controllers\User\FavoriteController;
-
+use \App\Http\Controllers\User\ReviewController as UserReviewController; ;
 use \App\Http\Controllers\UserAuth\AuthController;
 use Illuminate\Support\Facades\Auth;
-
-
 //! Admin Routes -----------------------------------------------------------------
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AuthAdminController::class, 'login']);
@@ -27,13 +25,11 @@ Route::prefix('admin')->group(function () {
 });
 Route::middleware('auth:sanctum')->post('/admin/create-session', function (Request $request) {
     Auth::guard('web')->login($request->user());
-
     return response()->json([
         'success' => true,
         'message' => 'Admin session created successfully.'
     ]);
 });
-
 //! Admin Protected Routes -------------------------------------------------------
 Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
 
@@ -47,6 +43,7 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/approve-user/{id}', [AuthAdminController::class, 'approveUser']);
     Route::post('/users/{id}/charge-wallet', [AuthAdminController::class, 'chargeWallet']);
     //! Stats and Reports
+    // TODO
     Route::get('/stats', [AuthAdminController::class, 'getStats']);
     Route::get('/reports', [AuthAdminController::class, 'viewReports']);
 
@@ -57,15 +54,13 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::post('/apartments/{id}/approve', [ApartmentController::class, 'approve']);
     Route::post('/apartments/{id}/reject', [ApartmentController::class, 'reject']);
     //! Rental Management
+    // TODO
     Route::get('/rentals', [RentalController::class, 'index']);
     Route::get('/rentals/{id}', [RentalController::class, 'show']);
     Route::delete('/rentals/{id}', [RentalController::class, 'destroy']);
     Route::post('/rentals/{id}/approve', [RentalController::class, 'approve']);
     Route::post('/rentals/{id}/reject', [RentalController::class, 'reject']);
 });
-
-
-
 //! Regular User Auth Routes ----------------------------------------------------
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -83,12 +78,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/apartments/{id}', [UserApartmentController::class, 'update']);
     Route::delete('/user/apartments/{id}', [UserApartmentController::class, 'destroy']);
     //! User Rental Routes
+    // TODO
     Route::get('/user/rentals', [UserRentalController::class, 'index']);
     Route::get('/user/rentals/{id}', [UserRentalController::class, 'show']);
     Route::get('/user/apartments/{id}/availability', [UserRentalController::class, 'checkAvailability']);
     Route::post('/user/apartments/{id}/rent', [UserRentalController::class, 'rent']);
     //! User Favorite Routes
+    // TODO
     Route::get('/user/favorites', [FavoriteController::class, 'index']);
     Route::post('/user/favorites/{apartmentId}', [FavoriteController::class, 'add']);
     Route::delete('/user/favorites/{apartmentId}', [FavoriteController::class, 'remove']);
+    //! User Review Routes
+    // TODO
+    Route::get('/user/reviews', [UserReviewController::class, 'index']);
+    Route::post('/user/reviews', [UserReviewController::class, 'store']);
+    Route::put('/user/reviews/{id}', [UserReviewController::class, 'update']);
+    Route::delete('/user/reviews/{id}', [UserReviewController::class, 'destroy']);
+
 });

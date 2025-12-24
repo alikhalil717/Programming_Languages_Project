@@ -23,7 +23,7 @@ class ApartmentController extends Controller
 
     public function index(Request $request)
     {
-        $apartments = Apartment::with('owner', 'images')->get();
+        $apartments = Apartment::with('owner', 'images')->where('status', 'approved')->get();
         return response()->json([
             'message' => 'Successfully retrieved user apartments.'
             ,
@@ -59,10 +59,14 @@ class ApartmentController extends Controller
 
     public function update(Request $request, $id)
     {
+        $result = $this->apartmentService->updateApartment($request, $id);
+        return response()->json($result, $result['success'] ? 200 : 422);
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $result = $this->apartmentService->deleteApartment($request, $id);
+        return response()->json($result, $result['success'] ? 200 : 422);
 
     }
 
