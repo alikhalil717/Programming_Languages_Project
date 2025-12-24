@@ -142,20 +142,63 @@
     </div>
 </div>
 
+<div id="charge-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold">Charge Wallet</h3>
+                <button onclick="closeChargeModal()" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <div id="charge-modal-content">
+                <div class="mb-4">
+                    <p class="text-gray-600 mb-2">Enter amount to charge user's wallet:</p>
+                    <div class="relative">
+                        <input type="number"
+                               id="charge-amount"
+                               placeholder="Enter amount"
+                               class="w-full pl-4 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                               min="1"
+                               step="0.01">
+                        <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Minimum amount: $1.00</p>
+                </div>
+
+                <div id="wallet-info" class="mb-6 p-3 bg-gray-50 rounded-lg hidden">
+                    <p class="text-sm text-gray-600">Current wallet balance: <span id="current-wallet" class="font-semibold">$0</span></p>
+                    <p class="text-sm text-gray-600 mt-1">New balance: <span id="new-wallet" class="font-semibold text-green-600">$0</span></p>
+                </div>
+
+                <div class="flex gap-3 mt-6">
+                    <button onclick="closeChargeModal()" class="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50">
+                        Cancel
+                    </button>
+                    <button onclick="confirmChargeWallet()" id="charge-confirm-btn" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                        <i class="fas fa-wallet ml-2"></i> Charge Wallet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 async function fetchData(endpoint, options = {}) {
     try {
         const token = localStorage.getItem('admin_token');
-        console.log('🔑 Token:', token ? token.substring(0, 15) + '...' : 'Not found');
+        console.log(' Token:', token ? token.substring(0, 15) + '...' : 'Not found');
 
         if (!token) {
-            console.error('❌ No token - please login first');
+            console.error(' No token - please login first');
             window.location.href = '/admin/login';
             return { success: false, message: 'Unauthorized' };
         }
 
         const apiUrl = `/api/admin/${endpoint}`;
-        console.log('📡 Requesting data from:', apiUrl);
+        console.log(' Requesting data from:', apiUrl);
 
         const headers = {
             'Authorization': `Bearer ${token}`,
@@ -175,7 +218,7 @@ async function fetchData(endpoint, options = {}) {
         }
 
         const response = await fetch(apiUrl, fetchOptions);
-        console.log('📊 Response status:', response.status, response.statusText);
+        console.log(' Response status:', response.status, response.statusText);
 
         if (response.status === 401) {
             localStorage.removeItem('admin_token');
@@ -185,7 +228,7 @@ async function fetchData(endpoint, options = {}) {
         }
 
         if (response.status === 404) {
-            console.warn('⚠️ API not found:', endpoint);
+            console.warn(' API not found:', endpoint);
             return {
                 success: false,
                 message: 'Service currently unavailable'
@@ -196,18 +239,18 @@ async function fetchData(endpoint, options = {}) {
         try {
             data = await response.json();
         } catch (jsonError) {
-            console.error('❌ JSON parse error:', jsonError);
+            console.error(' JSON parse error:', jsonError);
             return {
                 success: false,
                 message: 'Invalid data format'
             };
         }
 
-        console.log('✅ Response data:', data);
+        console.log(' Response data:', data);
         return data;
 
     } catch (error) {
-        console.error('🔥 Connection error:', error);
+        console.error(' Connection error:', error);
         return {
             success: false,
             message: 'Connection error: ' + error.message
@@ -217,6 +260,8 @@ async function fetchData(endpoint, options = {}) {
 
 let currentPage = 1;
 let totalPages = 1;
+let currentUserIdForCharge = null;
+let currentUserWallet = 0;
 
 function formatDate(dateString) {
     if (!dateString) return 'Not specified';
@@ -297,6 +342,14 @@ function closeUserModal() {
     document.getElementById('user-modal').classList.add('hidden');
 }
 
+function closeChargeModal() {
+    document.getElementById('charge-modal').classList.add('hidden');
+    document.getElementById('charge-amount').value = '';
+    currentUserIdForCharge = null;
+    currentUserWallet = 0;
+    document.getElementById('wallet-info').classList.add('hidden');
+}
+
 function getStatusClass(status) {
     switch(status) {
         case 'active': return 'bg-green-100 text-green-800';
@@ -335,7 +388,7 @@ function getIdStatusText(status) {
 
 async function loadUsers() {
     try {
-        console.log('🚀 Starting to load users...');
+        console.log(' Starting to load users...');
         showLoading();
 
         let endpoint = 'users?';
@@ -348,7 +401,7 @@ async function loadUsers() {
         if (idStatusFilter) endpoint += `id_status=${idStatusFilter}&`;
 
         const response = await fetchData(endpoint.slice(0, -1));
-        console.log('📦 API response:', response);
+        console.log(' API response:', response);
 
         if (response && response.success) {
             displayUsers(response);
@@ -358,7 +411,7 @@ async function loadUsers() {
         }
 
     } catch (error) {
-        console.error('❌ Error in loadUsers:', error);
+        console.error(' Error in loadUsers:', error);
         showError(error.message);
     } finally {
         hideLoading();
@@ -445,6 +498,11 @@ function displayUsers(response) {
 
                         ${user.role !== 'admin' ?
                             `
+                            <button onclick="chargeUserWallet(${user.id})"
+                                    class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-sm">
+                                <i class="fas fa-wallet ml-1"></i> Charge
+                            </button>
+
                             ${user.status !== 'active' ?
                                 `<button onclick="approveUser(${user.id})"
                                         class="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm">
@@ -458,6 +516,11 @@ function displayUsers(response) {
                                     <i class="fas fa-times ml-1"></i> Deactivate
                                 </button>`
                             : ''}
+
+                            <button onclick="deleteUser(${user.id})"
+                                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm">
+                                <i class="fas fa-trash ml-1"></i> Delete
+                            </button>
                             `
                         : ''}
 
@@ -624,6 +687,13 @@ async function viewUserDetails(userId) {
                         </div>
                     </div>
 
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <p class="text-sm text-gray-500">Wallet Balance</p>
+                        <p class="font-bold text-lg ${user.wallet > 0 ? 'text-green-600' : 'text-gray-600'}">
+                            $${parseFloat(user.wallet || 0).toFixed(2)}
+                        </p>
+                    </div>
+
                     ${hasProfilePicture ? `
                     <div class="bg-gray-50 p-3 rounded-lg">
                         <p class="text-sm text-gray-500">Profile Picture</p>
@@ -643,7 +713,7 @@ async function viewUserDetails(userId) {
                     </div>
                     ` : ''}
 
-                    <!-- NEW: Personal ID Section -->
+                    <!-- Personal ID Section -->
                     <div class="bg-gray-50 p-3 rounded-lg">
                         <div class="flex justify-between items-center mb-2">
                             <p class="text-sm text-gray-500">Identity Verification</p>
@@ -713,6 +783,11 @@ async function viewUserDetails(userId) {
                     <div class="flex gap-3 pt-4">
                         ${user.role !== 'admin' ?
                             `
+                            <button onclick="openChargeModal(${user.id}, ${user.wallet || 0})"
+                                    class="flex-1 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                <i class="fas fa-wallet ml-2"></i> Charge Wallet
+                            </button>
+
                             ${user.status !== 'active' ?
                                 `<button onclick="approveUser(${user.id})"
                                         class="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
@@ -726,6 +801,11 @@ async function viewUserDetails(userId) {
                                     <i class="fas fa-times ml-2"></i> Deactivate User
                                 </button>`
                             : ''}
+
+                            <button onclick="deleteUserPrompt(${user.id})"
+                                    class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                <i class="fas fa-trash ml-2"></i> Delete User
+                            </button>
                             `
                         : ''}
 
@@ -812,17 +892,174 @@ async function verifyUserIdentity(userId) {
     }
 }
 
+async function chargeUserWallet(userId) {
+    try {
+        // جلب بيانات المستخدم أولاً للحصول على رصيده الحالي
+        showLoading();
+        const response = await fetchData(`users/${userId}`);
+
+        if (response && response.user) {
+            currentUserIdForCharge = userId;
+            currentUserWallet = parseFloat(response.user.wallet || 0);
+
+            document.getElementById('charge-modal').classList.remove('hidden');
+            document.getElementById('charge-amount').focus();
+
+            // عرض الرصيد الحالي
+            document.getElementById('current-wallet').textContent = `$${currentUserWallet.toFixed(2)}`;
+
+            // تحديث الرصيد الجديد عند تغيير المبلغ
+            document.getElementById('charge-amount').addEventListener('input', function() {
+                updateWalletPreview();
+            });
+
+        } else {
+            throw new Error('Failed to load user data');
+        }
+    } catch (error) {
+        showError('Error loading user data: ' + error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+function openChargeModal(userId, walletBalance) {
+    currentUserIdForCharge = userId;
+    currentUserWallet = parseFloat(walletBalance || 0);
+
+    document.getElementById('charge-modal').classList.remove('hidden');
+    document.getElementById('charge-amount').focus();
+    document.getElementById('current-wallet').textContent = `$${currentUserWallet.toFixed(2)}`;
+
+    document.getElementById('charge-amount').addEventListener('input', function() {
+        updateWalletPreview();
+    });
+}
+
+function updateWalletPreview() {
+    const amountInput = document.getElementById('charge-amount');
+    const amount = parseFloat(amountInput.value) || 0;
+
+    if (amount > 0) {
+        const newBalance = currentUserWallet + amount;
+        document.getElementById('new-wallet').textContent = `$${newBalance.toFixed(2)}`;
+        document.getElementById('wallet-info').classList.remove('hidden');
+    } else {
+        document.getElementById('wallet-info').classList.add('hidden');
+    }
+}
+
+async function confirmChargeWallet() {
+    const amountInput = document.getElementById('charge-amount');
+    const amount = parseFloat(amountInput.value);
+
+    if (!amount || amount < 1) {
+        showError('Please enter a valid amount (minimum $1)');
+        return;
+    }
+
+    if (!currentUserIdForCharge) {
+        showError('User ID not found');
+        return;
+    }
+
+    if (!confirm(`Are you sure you want to charge $${amount.toFixed(2)} to user's wallet?`)) {
+        return;
+    }
+
+    try {
+        showLoading();
+
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
+            window.location.href = '/admin/login';
+            return;
+        }
+
+        const apiUrl = `/api/admin/users/${currentUserIdForCharge}/charge-wallet`;
+        console.log(' Sending charge request to:', apiUrl);
+        console.log(' Amount:', amount);
+
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+            },
+            body: JSON.stringify({
+                amount: amount
+            })
+        });
+
+        console.log(' Response status:', response.status);
+
+        if (response.status === 401) {
+            localStorage.removeItem('admin_token');
+            window.location.href = '/admin/login';
+            return;
+        }
+
+        const data = await response.json();
+        console.log('📦 Response data:', data);
+
+        if (data.success) {
+            showSuccess(`Wallet charged successfully! New balance: $${data.wallet_balance.toFixed(2)}`);
+            closeChargeModal();
+            closeUserModal();
+            loadUsers();
+        } else {
+            throw new Error(data.message || 'Failed to charge wallet');
+        }
+    } catch (error) {
+        console.error(' Error charging wallet:', error);
+        showError(error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+async function deleteUser(userId) {
+    if (!confirm('Are you sure you want to delete this user? This action cannot be undone!')) {
+        return;
+    }
+
+    try {
+        showLoading();
+        const response = await fetchData(`users/${userId}`, { method: 'DELETE' });
+
+        if (response && response.success) {
+            showSuccess('User deleted successfully');
+            loadUsers();
+        } else {
+            throw new Error(response?.message || 'Failed to delete user');
+        }
+    } catch (error) {
+        showError(error.message);
+    } finally {
+        hideLoading();
+    }
+}
+
+function deleteUserPrompt(userId) {
+    if (confirm('Are you sure you want to delete this user? This action cannot be undone!')) {
+        deleteUser(userId);
+        closeUserModal();
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Users page loaded');
+    console.log(' Users page loaded');
 
     const token = localStorage.getItem('admin_token');
     if (!token) {
-        console.error('❌ No token - redirecting to login');
+        console.error(' No token - redirecting to login');
         window.location.href = '/admin/login';
         return;
     }
 
-    console.log('✅ Token exists, loading users...');
+    console.log(' Token exists, loading users...');
 
     const searchInput = document.getElementById('search-input');
     let searchTimeout;
@@ -858,7 +1095,7 @@ async function testUsersAPI() {
     const token = localStorage.getItem('admin_token');
 
     if (!token) {
-        console.error('❌ No token');
+        console.error(' No token');
         return;
     }
 
@@ -874,7 +1111,7 @@ async function testUsersAPI() {
 
         if (response.ok) {
             const data = await response.json();
-            console.log('✅ Users data:', data);
+            console.log(' Users data:', data);
             console.log(`👥 Number of users: ${data.users ? data.users.length : 0}`);
 
             if (data.users && data.users.length > 0) {
@@ -897,15 +1134,15 @@ async function testUsersAPI() {
                 }
             }
 
-            alert(`✅ API is working! Number of users: ${data.users?.length || 0}`);
+            alert(` API is working! Number of users: ${data.users?.length || 0}`);
         } else {
             const errorText = await response.text();
-            console.error('❌ API error:', errorText);
-            alert('❌ API error: ' + response.status);
+            console.error(' API error:', errorText);
+            alert(' API error: ' + response.status);
         }
     } catch (error) {
-        console.error('🔥 Connection error:', error);
-        alert('🔥 Connection error: ' + error.message);
+        console.error(' Connection error:', error);
+        alert(' Connection error: ' + error.message);
     }
 }
 
@@ -922,6 +1159,6 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-console.log('✅ users.blade.js loaded successfully');
+console.log(' users.blade.js loaded successfully');
 </script>
 @endsection

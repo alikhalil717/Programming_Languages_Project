@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Http\Requests\ApartmentRequest;
 use Illuminate\Http\Request;
@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\ApartmentImage;
-use App\Services\ApartmentService;
+use App\Services\User\ApartmentService;
+use App\Http\Controllers\Controller;
 
 class ApartmentController extends Controller
 {
@@ -62,7 +63,7 @@ class ApartmentController extends Controller
 
     public function destroy($id)
     {
-        
+
     }
 
 
