@@ -8,7 +8,8 @@ use \App\Http\Controllers\Admin\RentalController;
 use \App\Http\Controllers\User\RentalController as UserRentalController;
 use \App\Http\Controllers\User\ApartmentController as UserApartmentController;
 use \App\Http\Controllers\User\FavoriteController;
-use \App\Http\Controllers\User\ReviewController as UserReviewController; ;
+use \App\Http\Controllers\User\ReviewController as UserReviewController;
+;
 use \App\Http\Controllers\UserAuth\AuthController;
 use Illuminate\Support\Facades\Auth;
 
@@ -77,11 +78,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/apartments/{id}', [UserApartmentController::class, 'update']);
     Route::delete('/user/apartments/{id}', [UserApartmentController::class, 'destroy']);
     //! User Rental Routes
-    // TODO
+
     Route::get('/user/rentals', [UserRentalController::class, 'index']);
     Route::get('/user/rentals/{id}', [UserRentalController::class, 'show']);
-    Route::get('/user/apartments/{id}/availability', [UserRentalController::class, 'checkAvailability']);
-    Route::post('/user/apartments/{id}/rent', [UserRentalController::class, 'rent']);
+    // TODO
+    Route::get('/user/apartments/{id}/availability', [UserRentalController::class, 'checkifAvailable']);
+    Route::post('/user/apartments/{id}/rent', [UserRentalController::class, 'store']);
     //! User Favorite Routes
     // TODO
     Route::get('/user/favorites', [FavoriteController::class, 'index']);

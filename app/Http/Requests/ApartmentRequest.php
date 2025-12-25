@@ -35,8 +35,8 @@ class ApartmentRequest extends FormRequest
             'price_per_night' => 'required|numeric',
             'number_of_bedrooms' => 'required|integer|min:0',
             'number_of_bathrooms' => 'required|integer|min:0',
-            'images' => 'sometimes|array',
-            'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'images' => 'required|array',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 

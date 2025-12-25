@@ -18,6 +18,7 @@ class Apartment extends Model
         'address',
         'city',
         'state',
+        'rental_status',
         'price_per_night',
         'number_of_bedrooms',
         'number_of_bathrooms',
@@ -48,6 +49,17 @@ class Apartment extends Model
 
 
     }
+    public function isAvailable($startDate, $endDate): bool
+    {
+        return Rental::checkAvailability($this->id, $startDate, $endDate);
+    }
+    public function calculateTotalPrice($startDate, $endDate): float
+    {
+        $start = \Carbon\Carbon::parse($startDate);
+        $end = \Carbon\Carbon::parse($endDate);
+        $nights = $start->diffInDays($end);
+        return $nights * $this->price_per_night;
+    }
 
     public function getImageUrlAttribute()
     {
@@ -73,7 +85,7 @@ class Apartment extends Model
         return $this->hasMany(Review::class, 'apartment_id');
     }
 
-    
+
     public function favorites()
     {
         return $this->hasMany(Favorite::class, 'apartment_id');

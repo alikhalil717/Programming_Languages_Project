@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('city');
             $table->string('state');
             $table->string('status')->default('pending');
+            $table->string('rental_status')->default('available');
             $table->decimal('price_per_night', 8, 2);
             $table->integer('number_of_bedrooms');
             $table->integer('number_of_bathrooms');
