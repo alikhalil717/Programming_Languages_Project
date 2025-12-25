@@ -3,10 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Models\User  ;
+use App\Models\User;
 use phpDocumentor\Reflection\PseudoTypes\True_;
-use  Illuminate\Contracts\Validation\Validator;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+
 class CreateUserRequest extends FormRequest
 {
     /**
@@ -27,18 +28,18 @@ class CreateUserRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => ['required','string' ,'email' ,'max:255' ,'unique:' . User::class],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:' . User::class],
             'password' => 'required|string|min:8',
-            'phone_number' => 'required|string|max:20' ,
+            'phone_number' => ['required', 'string', 'max:20', 'unique:' . User::class],
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'date_of_birth' => 'required|date',
-            'personal_id' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048' , 
+            'personal_id' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
 
         ];
     }
 
 
-       protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
             response()->json([
