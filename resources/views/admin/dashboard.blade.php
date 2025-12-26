@@ -141,7 +141,7 @@ async function loadDashboardData() {
             document.getElementById('revenue-count').textContent = '$' + (statsResponse.revenue || 0);
         }
 
-        const bookingsResponse = await fetchData('rentals?limit=5');
+        const bookingsResponse = await fetchData('rentals');
         if (bookingsResponse && bookingsResponse.rentals) {
             const bookingsBody = document.getElementById('recent-bookings');
             bookingsBody.innerHTML = '';
@@ -155,7 +155,7 @@ async function loadDashboardData() {
                                     <div class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center ml-3">
                                         <i class="fas fa-user text-indigo-600 text-sm"></i>
                                     </div>
-                                    <span>${booking.user?.name || 'Not specified'}</span>
+                                    <span>${booking.renter?.first_name || 'Not specified'}</span>
                                 </div>
                             </td>
                             <td class="p-3">${booking.apartment?.title || 'Not specified'}</td>

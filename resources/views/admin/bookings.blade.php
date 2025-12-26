@@ -222,9 +222,9 @@ async function loadBookings() {
             if (value) queryParams.append(key, value);
         }
 
-        const response = await fetchData(`rentals?${queryParams.toString()}`);
+        const response = await fetchData('rentals?limit=5');
 
-        if (response && response.success) {
+        if (response && response.rentals) {
             displayBookings(response);
         } else {
             throw new Error(response?.message || 'Failed to load bookings');
@@ -270,8 +270,8 @@ function displayBookings(response) {
                             <i class="fas fa-user text-blue-600 text-sm"></i>
                         </div>
                         <div>
-                            <p class="font-medium">${booking.user?.name || 'Not specified'}</p>
-                            <p class="text-xs text-gray-500">${booking.user?.phone_number || ''}</p>
+                            <p class="font-medium">${booking.renter?.first_name || 'Not specified'}</p>
+                            <p class="text-xs text-gray-500">${booking.renter?.phone_number || ''}</p>
                         </div>
                     </div>
                 </td>
@@ -400,9 +400,9 @@ async function viewBookingDetails(bookingId) {
                                     <i class="fas fa-user text-blue-600"></i>
                                 </div>
                                 <div>
-                                    <p class="font-medium">${booking.user?.name}</p>
-                                    <p class="text-sm text-gray-500">${booking.user?.phone_number}</p>
-                                    <p class="text-sm text-gray-500">${booking.user?.email}</p>
+                                    <p class="font-medium">${booking.renter?.first_name}</p>
+                                    <p class="text-sm text-gray-500">${booking.renter?.phone_number}</p>
+                                    <p class="text-sm text-gray-500">${booking.renter?.email}</p>
                                 </div>
                             </div>
                         </div>

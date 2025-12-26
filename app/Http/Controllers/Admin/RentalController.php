@@ -12,7 +12,7 @@ class RentalController extends Controller
     public function index()
     {
         $rentals = Rental::with(['apartment', 'renter'])->get();
-        return response()->json(['rentals' => $rentals], 200);
+        return response()->json(['rentals' => $rentals, 'success' => true], 200);
     }
 
     public function show($id)

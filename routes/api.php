@@ -81,7 +81,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user/rentals', [UserRentalController::class, 'index']);
     Route::get('/user/rentals/{id}', [UserRentalController::class, 'show']);
-    // TODO
     Route::get('/user/apartments/{id}/availability', [UserRentalController::class, 'checkifAvailable']);
     Route::post('/user/apartments/{id}/rent', [UserRentalController::class, 'store']);
     //! User Favorite Routes
