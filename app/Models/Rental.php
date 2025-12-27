@@ -89,9 +89,6 @@ class Rental extends Model
         return array_values($availableDates);
     }
 
-
-
-
     public static function getAvailablePeriods($apartmentId, $startDate = null, $endDate = null): array
     {
         $availableDates = self::getAllAvailableDates($apartmentId, $startDate, $endDate);
@@ -132,5 +129,9 @@ class Rental extends Model
         return $periods;
 
 
+    }
+    public function updaterentals()
+    {
+        return $this->hasMany(Updaterental::class);
     }
 }
