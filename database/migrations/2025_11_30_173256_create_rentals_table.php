@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->date('start_date');
             $table->date('end_date');
             $table->decimal('total_price', 10, 2);
-            $table->enum('status', ['pending', 'confirmed', 'canceled', 'ongoing', 'finished'])->default('pending');
+            $table->enum('status', ['pending', 'confirmed', 'canceled', 'ongoing', 'finished', 'rejected'])->default('pending');
             $table->text('special_requests')->nullable();
             $table->string('payment_method')->default('wallet')->nullable();
             $table->timestamps();

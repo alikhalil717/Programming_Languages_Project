@@ -54,13 +54,12 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::post('/apartments/{id}/approve', [ApartmentController::class, 'approve']);
     Route::post('/apartments/{id}/reject', [ApartmentController::class, 'reject']);
     //! Rental Management
-    // TODO
+
     Route::get('/rentals', [RentalController::class, 'index']);
     Route::get('/rentals/{id}', [RentalController::class, 'show']);
-    Route::delete('/rentals/{id}', [RentalController::class, 'destroy']);
-    Route::post('/rentals/{id}/approve', [RentalController::class, 'approve']);
-    Route::post('/rentals/{id}/reject', [RentalController::class, 'reject']);
 });
+
+
 //! Regular User Auth Routes ----------------------------------------------------
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -77,12 +76,27 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/apartments/{id}', [UserApartmentController::class, 'show']);
     Route::put('/user/apartments/{id}', [UserApartmentController::class, 'update']);
     Route::delete('/user/apartments/{id}', [UserApartmentController::class, 'destroy']);
+
     //! User Rental Routes
 
+    //! renter Routes
     Route::get('/user/rentals', [UserRentalController::class, 'index']);
     Route::get('/user/rentals/{id}', [UserRentalController::class, 'show']);
     Route::get('/user/apartments/{id}/availability', [UserRentalController::class, 'checkifAvailable']);
     Route::post('/user/apartments/{id}/rent', [UserRentalController::class, 'store']);
+    Route::post('/user/rentals/{id}/cancel', [UserRentalController::class, 'cancel']);
+    Route::put('/user/rentals/{id}/update', [UserRentalController::class, 'update']);
+    //! owner Routes
+
+    Route::get('/user/owner/rentals', [UserRentalController::class, 'ownerRentals']);
+    Route::get('/user/owner/rentals/{id}', [UserRentalController::class, 'ownershow']);
+    Route::post('/user/owner/rentals/{id}/approve', [UserRentalController::class, 'approveRental']);
+    Route::post('/user/owner/rentals/{id}/reject', [UserRentalController::class, 'rejectRental']);
+    Route::get('/user/owner/updaterentals', [UserRentalController::class, 'ownerRentalsUpdate']);
+    Route::get('/user/owner/updaterental/{id}', [UserRentalController::class, 'getRentalForUpdate']);
+    Route::post('/user/owner/updaterental/{id}/approve', [UserRentalController::class, 'approveRentalupdate']);
+    Route::post('/user/owner/updaterental/{id}/reject', [UserRentalController::class, 'rejectRentalupdate']);
+
     //! User Favorite Routes
     // TODO
     Route::get('/user/favorites', [FavoriteController::class, 'index']);
