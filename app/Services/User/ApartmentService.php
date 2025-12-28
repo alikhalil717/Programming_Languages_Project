@@ -23,7 +23,9 @@ class ApartmentService
         $apartment = Apartment::with('owner', 'images')
             ->where('status', 'approved')
             ->filter([
+                'title' => request()->input('title'),
                 'city' => $request->input('city'),
+                'address' => $request->input('address'),
                 'state' => $request->input('state'),
                 'min_price' => $request->input('min_price'),
                 'max_price' => $request->input('max_price'),
@@ -186,5 +188,23 @@ class ApartmentService
                 'message' => 'Failed to delete apartment: ' . $e->getMessage()
             ];
         }
+    }
+    public function ownerapartments(Request $request)
+    {
+        $user = $request->user();
+        if (!$user) {
+            return [
+                'success' => false,
+                'message' => 'User not authenticated'
+            ];
+        }
+        $apartments = Apartment::with('rentals', 'images')->where('owner_id', $user->id)->get();
+        return [
+            'success' => true,
+            'message' => 'Apartments retrieved successfully',
+            'apartments' => $apartments
+
+        ];
+
     }
 }

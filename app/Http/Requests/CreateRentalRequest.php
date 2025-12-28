@@ -26,7 +26,6 @@ class CreateRentalRequest extends FormRequest
     {
         $today = Carbon::today()->format('Y-m-d');
         return [
-
             'start_date' => ['required', 'date', 'after_or_equal:' . $today],
             'end_date' => ['required', 'date', 'after:start_date'],
             'special_requests' => 'nullable|string|max:500',

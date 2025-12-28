@@ -38,7 +38,7 @@ class ApartmentController extends Controller
 
     public function show($id)
     {
-        $result =$this->apartmentService->getApartmentDetails($id);
+        $result = $this->apartmentService->getApartmentDetails($id);
         return response()->json($result, $result['success'] ? 200 : 422);
     }
 
@@ -51,6 +51,12 @@ class ApartmentController extends Controller
     public function destroy(Request $request, $id)
     {
         $result = $this->apartmentService->deleteApartment($request, $id);
+        return response()->json($result, $result['success'] ? 200 : 422);
+
+    }
+    public function ownerapartments(Request $request)
+    {
+        $result = $this->apartmentService->ownerapartments($request);
         return response()->json($result, $result['success'] ? 200 : 422);
 
     }

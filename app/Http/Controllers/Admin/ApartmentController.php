@@ -59,6 +59,7 @@ class ApartmentController extends Controller
         if (!$apartment) {
             return response()->json(['message' => 'Apartment not found', 'success' => false], 404);
         }
+        if (!$apartment->status)
 
         $apartment->update(['status' => 'rejected']);
 

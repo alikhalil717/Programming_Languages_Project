@@ -16,6 +16,7 @@ return new class extends Migration {
             $table->string('address');
             $table->string('city');
             $table->string('state');
+            $table->integer('rate')->default(0);
             $table->string('status')->default('pending');
             $table->string('rental_status')->default('available');
             $table->decimal('price_per_night', 8, 2);
@@ -29,4 +30,5 @@ return new class extends Migration {
     {
         Schema::dropIfExists('apartments');
     }
+
 };

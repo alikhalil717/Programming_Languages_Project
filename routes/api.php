@@ -76,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/apartments/{id}', [UserApartmentController::class, 'show']);
     Route::put('/user/apartments/{id}', [UserApartmentController::class, 'update']);
     Route::delete('/user/apartments/{id}', [UserApartmentController::class, 'destroy']);
+    Route::get('/user/ownerapartments', [UserApartmentController::class, 'ownerapartments']);
 
     //! User Rental Routes
 
@@ -98,15 +99,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/owner/updaterental/{id}/reject', [UserRentalController::class, 'rejectRentalupdate']);
 
     //! User Favorite Routes
-    // TODO
     Route::get('/user/favorites', [FavoriteController::class, 'index']);
     Route::post('/user/favorites/{apartmentId}', [FavoriteController::class, 'add']);
     Route::delete('/user/favorites/{apartmentId}', [FavoriteController::class, 'remove']);
     //! User Review Routes
-    // TODO
-    Route::get('/user/reviews', [UserReviewController::class, 'index']);
-    Route::post('/user/reviews', [UserReviewController::class, 'store']);
-    Route::put('/user/reviews/{id}', [UserReviewController::class, 'update']);
-    Route::delete('/user/reviews/{id}', [UserReviewController::class, 'destroy']);
+    Route::post('/user/apartment/{id}/reviews', [UserReviewController::class, 'store']);
 
 });

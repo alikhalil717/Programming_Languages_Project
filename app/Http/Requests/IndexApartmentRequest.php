@@ -24,8 +24,9 @@ class IndexApartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-
+            'title' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
             'min_price' => 'nullable|numeric|min:0',
             'max_price' => [

@@ -18,6 +18,7 @@ class Apartment extends Model
         'address',
         'city',
         'state',
+        'rate',
         'rental_status',
         'price_per_night',
         'number_of_bedrooms',
@@ -27,9 +28,14 @@ class Apartment extends Model
 
     public function scopeFilter($query, array $filters)
     {
-
+        $query->when($filters['title'] ?? null, function ($query) use ($filters) {
+            $query->where('title', 'like', '%' . $filters['title'] . '%');
+        });
         $query->when($filters['city'] ?? null, function ($query) use ($filters) {
             $query->where('city', 'like', '%' . $filters['city'] . '%');
+        });
+        $query->when($filters['address'] ?? null, function ($query) use ($filters) {
+            $query->where('address', 'like', '%' . $filters['address'] . '%');
         });
         $query->when($filters['min_price'] ?? null, function ($query) use ($filters) {
             $query->where('price_per_night', '>=', $filters['min_price']);
@@ -49,6 +55,11 @@ class Apartment extends Model
 
 
     }
+    public function rating()
+    {
+        $reviews = Review::where('apartment_id', $this->id)->get();
+        return $reviews->avg('rating');
+    }
     public function isAvailable($startDate, $endDate): bool
     {
         return Rental::checkAvailability($this->id, $startDate, $endDate);
@@ -57,7 +68,7 @@ class Apartment extends Model
     {
         $start = \Carbon\Carbon::parse($startDate);
         $end = \Carbon\Carbon::parse($endDate);
-        $nights = $start->diffInDays($end);
+        $nights = $start->diffInDays($end) + 1;
         return $nights * $this->price_per_night;
     }
 
@@ -89,6 +100,11 @@ class Apartment extends Model
     public function favorites()
     {
         return $this->hasMany(Favorite::class, 'apartment_id');
+    }
+    public function rentals()
+    {
+
+        return $this->hasMany(Rental::class, 'apartment_id');
     }
 
 

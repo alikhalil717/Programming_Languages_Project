@@ -407,6 +407,9 @@ class RentalService
             ];
         }
         $rental->status = 'confirmed';
+        $owner = User::findOrFail($apartment->owner_id);
+        $owner->wallet += $rental->total_price;
+        $owner->save();
         $rental->save();
         return [
             'success' => true,
@@ -546,10 +549,11 @@ class RentalService
                 'message' => 'Unauthorized access to this update rental request'
             ];
         }
+        $owner = User::findOrFail($apartment->owner_id);
 
         $chickAvailability = Rental::checkAvailability($rental->apartment_id, $updaterental->new_start_date, $updaterental->new_end_date, $rental->id);
         if (!$chickAvailability || ($rental->status !== 'pending' && $rental->status !== 'confirmed')) {
-            $new_total_price = $apartment::calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
+            $new_total_price = $apartment->calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
             $renter = User::findOrFail($rental->renter_id);
             if ($new_total_price < $rental->total_price) {
                 $remaining_price = $rental->total_price - $new_total_price;
@@ -578,11 +582,15 @@ class RentalService
                 'message' => 'Rental dates are not available so the update request is rejected'
             ];
         }
-        $new_total_price = $apartment::calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
+        $new_total_price = $apartment->calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
         $rental->start_date = $updaterental->new_start_date;
         $rental->end_date = $updaterental->new_end_date;
+        $owner->wallet -= $rental->total_price;
         $rental->total_price = $new_total_price;
+
+        $owner->wallet += $new_total_price;
         $rental->save();
+        $owner->save();
         $updaterental->status = 'approved';
         $updaterental->save();
         return [
@@ -627,7 +635,7 @@ class RentalService
                 'message' => 'Unauthorized access to this update rental request'
             ];
         }
-        $new_total_price = $apartment::calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
+        $new_total_price = $apartment->calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
         $renter = User::findOrFail($rental->renter_id);
         if ($new_total_price < $rental->total_price) {
             $remaining_price = $rental->total_price - $new_total_price;
