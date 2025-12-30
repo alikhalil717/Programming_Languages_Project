@@ -19,6 +19,7 @@ class Apartment extends Model
         'city',
         'state',
         'rate',
+        'area',
         'rental_status',
         'price_per_night',
         'number_of_bedrooms',
@@ -46,8 +47,12 @@ class Apartment extends Model
         $query->when($filters['state'] ?? null, function ($query) use ($filters) {
             $query->where('state', 'like', '%' . $filters['state'] . '%');
         });
+
         $query->when($filters['number_of_bedrooms'] ?? null, function ($query) use ($filters) {
             $query->where('number_of_bedrooms', '>=', $filters['number_of_bedrooms']);
+        });
+        $query->when($filters['area'] ?? null, function ($query) use ($filters) {
+            $query->where('area', '>=', $filters['area']);
         });
         $query->when($filters['number_of_bathrooms'] ?? null, function ($query) use ($filters) {
             $query->where('number_of_bathrooms', '>=', $filters['number_of_bathrooms']);

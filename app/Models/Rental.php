@@ -134,4 +134,5 @@ class Rental extends Model
     {
         return $this->hasMany(Updaterental::class);
     }
+    
 }

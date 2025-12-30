@@ -11,5 +11,14 @@ class Favorite extends Model
         'user_id',
         'apartment_id',
     ];
-    
+
+    public function apartment()
+    {
+        return $this->belongsTo(Apartment::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

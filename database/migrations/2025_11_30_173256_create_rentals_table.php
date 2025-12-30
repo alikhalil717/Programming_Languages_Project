@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->decimal('total_price', 10, 2);
             $table->enum('status', ['pending', 'confirmed', 'canceled', 'ongoing', 'finished', 'rejected'])->default('pending');
             $table->text('special_requests')->nullable();
-            $table->string('payment_method')->default('wallet')->nullable();
+            $table->string('payment_method')->default('wallet');
             $table->timestamps();
         });
     }

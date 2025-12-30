@@ -29,6 +29,7 @@ class IndexApartmentRequest extends FormRequest
             'address' => 'nullable|string|max:255',
             'state' => 'nullable|string|max:255',
             'min_price' => 'nullable|numeric|min:0',
+            'area' => 'nullable|integer|min:60',
             'max_price' => [
                 'nullable',
                 'numeric',

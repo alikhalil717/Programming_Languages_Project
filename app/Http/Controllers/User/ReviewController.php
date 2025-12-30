@@ -18,7 +18,7 @@ class ReviewController extends Controller
         ]);
         $user = $request->user();
         if (!$user) {
-            return response()->json()->json(['message' => 'Unauthorized', 'success' => false], 403);
+            return response()->json(['message' => 'Unauthorized', 'success' => false], 403);
         }
         $aparment = Apartment::find($id);
         if (!$aparment) {
@@ -27,6 +27,10 @@ class ReviewController extends Controller
         $rental = Rental::where('apartment_id', $id)->where('renter_id', $user->id)->where('status', 'finished')->first();
         if (!$rental) {
             return response()->json(['message' => 'You have not rented this apartment before', 'success' => false], 400);
+        }
+        $review = Review::where('apartment_id', $id)->where('user_id', $user->id)->first();
+        if ($review) {
+            return response()->json(['message' => 'You have already reviewed this apartment', 'success' => false], 400);
         }
         $review = Review::create([
             'apartment_id' => $id,

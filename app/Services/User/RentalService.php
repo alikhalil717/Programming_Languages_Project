@@ -105,7 +105,7 @@ class RentalService
         );
         $paymentMethod = $request->input('payment_method');
 
-        if ($request->input('payment_method') === null) {
+        if (!$request->input('payment_method')) {
             $paymentMethod = 'wallet';
         }
         if ($paymentMethod === 'wallet') {
@@ -127,7 +127,7 @@ class RentalService
         $rental->end_date = $request->input('end_date');
         $rental->total_price = $totalPrice;
         $rental->special_requests = $request->input('special_requests');
-        $rental->payment_method = $request->input('payment_method');
+        $rental->payment_method = $paymentMethod;
         $rental->status = 'pending';
         $rental->save();
         return [
@@ -188,6 +188,12 @@ class RentalService
         }
         $today = Carbon::today();
         $startDate = Carbon::parse($rental->start_date);
+        if ($rental->status === 'canceled' || $rental->status === 'completed' || $rental->status === 'rejected') {
+            return [
+                'success' => false,
+                'message' => 'Rental is already canceled'
+            ];
+        }
         if ($today->greaterThanOrEqualTo($startDate)) {
             return [
                 'success' => false,
@@ -338,7 +344,7 @@ class RentalService
                 'message' => 'Unauthenticated'
             ];
         }
-        $rental = Rental::with('apartment', 'apartment.images')->findOrFail($id);
+        $rental = Rental::with('apartment', 'apartment.images')->find($id);
         if (!$rental) {
             return [
                 'success' => false,
@@ -395,7 +401,7 @@ class RentalService
             $rental->end_date
         );
         if (!$chickAvailability) {
-            $renter = User::findOrFail($rental->renter_id);
+            $renter = User::find($rental->renter_id);
             if (!$renter)
                 $renter->wallet += $rental->total_price;
             $renter->save();
@@ -407,7 +413,7 @@ class RentalService
             ];
         }
         $rental->status = 'confirmed';
-        $owner = User::findOrFail($apartment->owner_id);
+        $owner = User::find($apartment->owner_id);
         $owner->wallet += $rental->total_price;
         $owner->save();
         $rental->save();
@@ -446,7 +452,7 @@ class RentalService
             ];
         }
 
-        $renter = User::findOrFail($rental->renter_id);
+        $renter = User::find($rental->renter_id);
         if (!$renter) {
             return [
                 'success' => false,
@@ -476,13 +482,15 @@ class RentalService
         $updateRentals = Updaterental::with('rental', 'rental.apartment', 'rental.apartment.images')
             ->whereHas('rental.apartment', function ($query) use ($user) {
                 $query->where('owner_id', $user->id);
-            });
+            })
+            ->get();
         return [
             'success' => true,
-            'message' => 'Rentals retrieved successfully',
+            'message' => ' update Rentals requests retrieved successfully',
             'updaterentals' => $updateRentals
         ];
     }
+
     public function getRentalForUpdate(Request $request, $id)
     {
         $user = $request->user();
@@ -492,14 +500,23 @@ class RentalService
                 'message' => 'Unauthenticated'
             ];
         }
-        $updaterental = Rental::findOrFail($id);
+        $updaterental = updaterental::find($id);
+
+
         if (!$updaterental) {
+            return [
+                'success' => false,
+                'message' => 'update Rental request not found'
+            ];
+        }
+
+        $rental = Rental::with('apartment', 'apartment.images')->find($updaterental->rental_id);
+        if (!$rental) {
             return [
                 'success' => false,
                 'message' => 'Rental not found'
             ];
         }
-        $rental = Rental::with('apartment', 'apartment.images')->findOrFail($updaterental->rental_id);
         if ($rental->apartment->owner_id !== $user->id) {
             return [
                 'success' => false,
@@ -508,8 +525,8 @@ class RentalService
         }
         return [
             'success' => true,
-            'message' => 'Rental retrieved successfully',
-            'rental' => $rental
+            'message' => ' update Rental request retrieved successfully',
+            'rental' => $updaterental
         ];
 
     }
@@ -549,12 +566,18 @@ class RentalService
                 'message' => 'Unauthorized access to this update rental request'
             ];
         }
-        $owner = User::findOrFail($apartment->owner_id);
+        if ($updaterental->status !== 'pending') {
+            return [
+                'success' => false,
+                'message' => 'You can only approve pending update rental requests'
+            ];
+        }
+        $owner = User::find($apartment->owner_id);
 
         $chickAvailability = Rental::checkAvailability($rental->apartment_id, $updaterental->new_start_date, $updaterental->new_end_date, $rental->id);
         if (!$chickAvailability || ($rental->status !== 'pending' && $rental->status !== 'confirmed')) {
             $new_total_price = $apartment->calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
-            $renter = User::findOrFail($rental->renter_id);
+            $renter = User::find($rental->renter_id);
             if ($new_total_price < $rental->total_price) {
                 $remaining_price = $rental->total_price - $new_total_price;
                 if ($renter->wallet < $remaining_price) {
@@ -582,6 +605,7 @@ class RentalService
                 'message' => 'Rental dates are not available so the update request is rejected'
             ];
         }
+
         $new_total_price = $apartment->calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
         $rental->start_date = $updaterental->new_start_date;
         $rental->end_date = $updaterental->new_end_date;
@@ -635,8 +659,14 @@ class RentalService
                 'message' => 'Unauthorized access to this update rental request'
             ];
         }
+        if ($updaterental->status !== 'pending') {
+            return [
+                'success' => false,
+                'message' => 'Update rental request is not pending'
+            ];
+        }
         $new_total_price = $apartment->calculateTotalPrice($updaterental->new_start_date, $updaterental->new_end_date);
-        $renter = User::findOrFail($rental->renter_id);
+        $renter = User::find($rental->renter_id);
         if ($new_total_price < $rental->total_price) {
             $remaining_price = $rental->total_price - $new_total_price;
             if ($renter->wallet < $remaining_price) {

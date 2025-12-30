@@ -17,7 +17,11 @@ class FavoriteService
                 'message' => 'User not found'
             ];
         }
-        $apartments = Favorite::with('apartment')->where('user_id', $user->id)->get();
+        $favorites = $user->favorites()->with('apartment', 'apartment.images')->get();
+        $apartments = [];
+        foreach ($favorites as $favorite) {
+            $apartments[] = $favorite->apartment;
+        }
         return [
             'success' => true,
             'message' => 'Favorites retrieved successfully',
@@ -34,6 +38,12 @@ class FavoriteService
             ];
         }
         $apartment = Apartment::find($id);
+        if (!$apartment) {
+            return [
+                'success' => false,
+                'message' => 'Apartment not found'
+            ];
+        }
         $favorite = Favorite::create([
             'user_id' => $user->id,
             'apartment_id' => $apartment->id

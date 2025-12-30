@@ -32,6 +32,7 @@ class ApartmentRequest extends FormRequest
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:100',
             'state' => 'required|string|max:100',
+            'area' => 'required|integer|min:60',
             'price_per_night' => 'required|numeric',
             'number_of_bedrooms' => 'required|integer|min:0',
             'number_of_bathrooms' => 'required|integer|min:0',
