@@ -12,6 +12,8 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Rental;
+use App\Models\ApartmentImage;
 use Illuminate\Support\Facades\File;
 class ApartmentService
 {
@@ -166,11 +168,23 @@ class ApartmentService
         }
 
 
-        $apartment = Apartment::find($id);
         if (!$apartment) {
             return [
                 'success' => false,
                 'message' => 'Apartment not found'
+            ];
+        }
+
+        $rentals = Rental::where('apartment_id', $apartment->id)->where(function ($query) {
+            $query->where('status', 'pending')
+                ->orWhere('status', 'confirmed')
+                ->orWhere('status', 'ongoing');
+        })->get();
+
+        if ($rentals->count() > 0) {
+            return [
+                'success' => false,
+                'message' => 'Apartment has ongoing or confirmed or pending rentals'
             ];
         }
         try {
