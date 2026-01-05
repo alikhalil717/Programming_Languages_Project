@@ -34,7 +34,27 @@ class ApartmentService
                 'max_price' => $request->input('max_price'),
                 'number_of_bedrooms' => $request->input('number_of_bedrooms'),
                 'number_of_bathrooms' => $request->input('number_of_bathrooms'),
-            ])->get();
+            ])->get()->map(function ($apartment) {
+                return [
+                    'id' => $apartment->id,
+                    'title' => $apartment->title,
+                    'description' => $apartment->description,
+                    'address' => $apartment->address,
+                    'city' => $apartment->city_data,
+                    'state' => $apartment->state_data,
+                    'price_per_night' => $apartment->price_per_night,
+                    'area' => $apartment->area,
+                    'number_of_bedrooms' => $apartment->number_of_bedrooms,
+                    'number_of_bathrooms' => $apartment->number_of_bathrooms,
+                    'status' => $apartment->status,
+                    'rental_status' => $apartment->rental_status,
+                    'rate' => $apartment->rate,
+                    'owner' => $apartment->owner,
+                    'images' => $apartment->images,
+                    'created_at' => $apartment->created_at,
+                    'updated_at' => $apartment->updated_at
+                ];
+            });
         return [
             'success' => true,
             'message' => 'Apartments retrieved successfully',
@@ -52,10 +72,29 @@ class ApartmentService
                 'message' => 'Apartment not found or not approved'
             ];
         }
+        $apartmentData = [
+            'id' => $apartment->id,
+            'title' => $apartment->title,
+            'description' => $apartment->description,
+            'address' => $apartment->address,
+            'city' => $apartment->city_data,
+            'state' => $apartment->state_data,
+            'price_per_night' => $apartment->price_per_night,
+            'area' => $apartment->area,
+            'number_of_bedrooms' => $apartment->number_of_bedrooms,
+            'number_of_bathrooms' => $apartment->number_of_bathrooms,
+            'status' => $apartment->status,
+            'rental_status' => $apartment->rental_status,
+            'rate' => $apartment->rate,
+            'owner' => $apartment->owner,
+            'images' => $apartment->images,
+            'created_at' => $apartment->created_at,
+            'updated_at' => $apartment->updated_at
+        ];
         return [
             'success' => true,
             'message' => 'Apartment details retrieved successfully',
-            'apartment' => $apartment
+            'apartment' => $apartmentData
         ];
     }
 

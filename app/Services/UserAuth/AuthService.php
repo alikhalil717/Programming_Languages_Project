@@ -5,6 +5,7 @@ use App\Http\Requests\LoginUserRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Models\User;
 use Exception;
+use App\Models\profileimage;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
@@ -14,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use League\CommonMark\Exception\IOException;
+use Pest\Plugins\Profile;
 use phpDocumentor\Reflection\Types\Null_;
 use function Laravel\Prompts\error;
 use function PHPUnit\Framework\returnArgument;
@@ -194,11 +196,13 @@ class AuthService
         $request->validated();
 
         $user = $request->user();
-
-        $user->first_name = $request->input('first_name', $user->first_name);
-        $user->last_name = $request->input('last_name', $user->last_name);
-        $user->phone_number = $request->input('phone_number', $user->phone_number);
-        $user->date_of_birth = $request->input('date_of_birth', $user->date_of_birth);
+        if ($request->has('first_name') && $request->has('last_name') && $request['first_name'] !== null && $request['last_name'] !== null) {
+            $user->first_name = $request->input('first_name', $user->first_name);
+            $user->last_name = $request->input('last_name', $user->last_name);
+        }
+        if ($request->has('phone_number') && $request['phone_number'] !== null) {
+            $user->phone_number = $request->input('phone_number', $user->phone_number);
+        }
 
 
         if ($request->hasFile('profile_picture')) {
@@ -217,14 +221,16 @@ class AuthService
                     //     $deleted = true;
                     //     \Log::info("Deleted file from: " . $path);
                     // }
-
+                    Profileimage::where('user_id', $user->id)->delete();
                     Storage::disk('public')->delete($imagepath);
 
                     if (!$deleted) {
                         \Log::warning("Image file not found in any path for UserID: " . $user->id);
                     }
+                    // delete the image from the profile image table :
 
-                    $image->delete();
+
+
 
                     $path = $request->file('profile_picture')->store('profile_pictures', 'public');
                     $user->profile_picture()->create([

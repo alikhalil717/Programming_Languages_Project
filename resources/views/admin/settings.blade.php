@@ -333,7 +333,7 @@ function startUptimeCounter() {
     }
 
     updateUptime();
-    setInterval(updateUptime, 60000);  
+    setInterval(updateUptime, 60000);
 }
 
 async function clearCache() {

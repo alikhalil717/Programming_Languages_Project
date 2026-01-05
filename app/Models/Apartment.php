@@ -114,4 +114,89 @@ class Apartment extends Model
 
 
 
+    public function getCityDataAttribute()
+    {
+        if (!$this->city) {
+            return null;
+        }
+
+        $key = $this->normalizeCityKey($this->city);
+
+        $arabic = trans("cities.{$key}", [], 'ar');
+        $english = trans("cities.{$key}", [], 'en');
+
+        $arabic = $arabic === "cities.{$key}" ? $this->city : $arabic;
+        $english = $english === "cities.{$key}" ? $this->city : $english;
+
+        return [
+            'ar' => $arabic,
+            'en' => $english,
+        ];
+    }
+
+
+    public function getStateDataAttribute()
+    {
+        if (!$this->state) {
+            return null;
+        }
+
+        $key = $this->normalizeStateKey($this->state);
+
+        $arabic = trans("states.{$key}", [], 'ar');
+        $english = trans("states.{$key}", [], 'en');
+
+        $arabic = $arabic === "states.{$key}" ? $this->state : $arabic;
+        $english = $english === "states.{$key}" ? $this->state : $english;
+
+        return [
+            'ar' => $arabic,
+            'en' => $english,
+        ];
+    }
+
+
+    private function normalizeCityKey($cityName)
+    {
+        $cityName = strtolower(trim($cityName));
+
+        $mappings = [
+            'douma' => 'douma',
+            'damascus' => 'damascus_city',
+            'damascus city' => 'damascus_city',
+            'دمشق' => 'damascus_city',
+            'حلب' => 'aleppo_city',
+            'حمص' => 'homs_city',
+
+        ];
+
+        return $mappings[$cityName] ?? str_replace(' ', '_', $cityName);
+    }
+
+    private function normalizeStateKey($stateName)
+    {
+        $stateName = strtolower(trim($stateName));
+
+        $mappings = [
+            'دمشق' => 'damascus',
+            'ريف دمشق' => 'damascus_countryside',
+            'حلب' => 'aleppo',
+            'حمص' => 'homs',
+            'حماة' => 'hama',
+
+        ];
+
+        return $mappings[$stateName] ?? str_replace(' ', '_', $stateName);
+    }
+
+
+    protected $appends = ['city_data', 'state_data'];
+
+
+
+
+
+
+    ///ffffffffffffff
+
 }
