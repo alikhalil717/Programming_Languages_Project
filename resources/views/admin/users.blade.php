@@ -886,7 +886,6 @@
 
     async function chargeUserWallet(userId) {
         try {
-            // جلب بيانات المستخدم أولاً للحصول على رصيده الحالي
             showLoading();
             const response = await fetchData(`users/${userId}`);
 

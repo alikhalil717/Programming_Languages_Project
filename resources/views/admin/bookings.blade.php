@@ -5,7 +5,6 @@
 <div x-data>
     <h1 class="text-3xl font-bold mb-6" x-text="language === 'ar' ? 'إدارة الحجوزات' : 'Bookings Management'">Bookings Management</h1>
 
-    <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-white p-4 rounded-xl shadow border-t-4 border-indigo-500">
             <p class="text-sm text-gray-500" x-text="language === 'ar' ? 'إجمالي الحجوزات' : 'Total Bookings'">Total Bookings</p>
@@ -25,10 +24,8 @@
         </div>
     </div>
 
-    <!-- Search and Filters -->
     <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
         <div class="flex flex-col md:flex-row gap-4">
-            <!-- Search -->
             <div class="flex-1">
                 <div class="relative">
                     <input type="text"
@@ -39,13 +36,11 @@
                 </div>
             </div>
 
-            <!-- Date Range -->
             <div class="flex gap-2">
                 <input type="date" id="date-from" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 <input type="date" id="date-to" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
             </div>
 
-            <!-- Filters -->
             <div class="flex gap-2">
                 <select id="status-filter" class="border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     <option value="" x-text="language === 'ar' ? 'جميع الحالات' : 'All Statuses'">All Statuses</option>
@@ -62,15 +57,12 @@
         </div>
     </div>
 
-    <!-- Bookings Table -->
     <div class="bg-white p-6 rounded-xl shadow-lg">
-        <!-- Loading -->
         <div id="loading" class="text-center py-8">
             <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
             <p class="mt-2 text-gray-500" x-text="language === 'ar' ? 'جاري تحميل الحجوزات...' : 'Loading bookings...'">Loading bookings...</p>
         </div>
 
-        <!-- Error -->
         <div id="error" class="hidden bg-red-50 text-red-700 p-4 rounded-lg mb-4">
             <p id="error-message"></p>
             <button onclick="loadBookings()" class="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center">
@@ -79,7 +71,6 @@
             </button>
         </div>
 
-        <!-- Bookings Table Content -->
         <div id="bookings-content" class="hidden">
             <div class="overflow-x-auto">
                 <table class="w-full min-w-full">
@@ -115,12 +106,11 @@
                         </tr>
                     </thead>
                     <tbody id="bookings-body">
-                        <!-- Will be filled with data -->
                     </tbody>
                 </table>
             </div>
 
-            <!-- Pagination -->
+
             <div id="pagination" class="mt-6 flex justify-between items-center hidden">
                 <div class="text-sm text-gray-600" id="pagination-info"></div>
                 <div class="flex gap-2">
@@ -137,7 +127,6 @@
                 </div>
             </div>
 
-            <!-- No Results -->
             <div id="no-results" class="text-center p-8 hidden">
                 <div class="inline-block p-4 bg-gray-100 rounded-full mb-3">
                     <i class="fas fa-calendar-times text-gray-400 text-2xl"></i>
@@ -147,7 +136,6 @@
         </div>
     </div>
 
-    <!-- Booking Details Modal -->
     <div id="booking-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
             <div class="p-6">
@@ -159,7 +147,7 @@
                 </div>
 
                 <div id="booking-details-content">
-                    <!-- Will be filled with data -->
+
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">

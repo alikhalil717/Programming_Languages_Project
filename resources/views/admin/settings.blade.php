@@ -4,7 +4,6 @@
 <h1 class="text-3xl font-bold mb-6">System Settings</h1>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    <!-- General Settings -->
     <div class="lg:col-span-2">
         <div class="bg-white p-6 rounded-2xl shadow-lg">
             <h2 class="text-xl font-bold mb-4">General Settings</h2>
@@ -61,7 +60,6 @@
             </form>
         </div>
 
-        <!-- System Settings -->
         <div class="bg-white p-6 rounded-2xl shadow-lg mt-6">
             <h2 class="text-xl font-bold mb-4">System Settings</h2>
 
@@ -131,17 +129,13 @@
         </div>
     </div>
 
-    <!-- Quick Settings & Info -->
     <div class="space-y-6">
-        <!-- Admin Info -->
         <div class="bg-white p-6 rounded-2xl shadow-lg">
             <h2 class="text-xl font-bold mb-4">Admin Information</h2>
             <div id="admin-info">
-                <!-- Will be filled with data -->
             </div>
         </div>
 
-        <!-- System Info -->
         <div class="bg-white p-6 rounded-2xl shadow-lg">
             <h2 class="text-xl font-bold mb-4">System Information</h2>
             <div class="space-y-3">
@@ -160,7 +154,6 @@
             </div>
         </div>
 
-        <!-- Quick Actions -->
         <div class="bg-white p-6 rounded-2xl shadow-lg">
             <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
             <div class="space-y-3">

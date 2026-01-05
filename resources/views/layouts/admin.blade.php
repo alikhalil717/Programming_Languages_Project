@@ -192,7 +192,6 @@
 </div>
 
 <script>
-    // الترجمة
     const translations = {
         app_name: {
             en: "Tanzan Admin",

@@ -130,7 +130,6 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', async function() {
-    // الحصول على لغة Alpine.js من الـ parent
     const language = Alpine.$data.language || localStorage.getItem('admin_language') || 'en';
 
     await loadDashboardData();
