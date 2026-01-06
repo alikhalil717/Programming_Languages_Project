@@ -7,7 +7,6 @@ use App\Models\User;
 class FavoriteService
 {
 
-    // index
     public function index(Request $request)
     {
         $user = $request->user();

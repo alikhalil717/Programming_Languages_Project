@@ -136,8 +136,9 @@ class RentalService
             'rental' => $rental
         ];
     }
-    public function checkIfAvailable(CreateRentalRequest $request, $id): array
+    public function checkIfAvailable(Request $request, $id): array
     {
+        $user = $request->user();
         $apartment = Apartment::find($id);
         if (!$apartment) {
             return [
@@ -145,23 +146,21 @@ class RentalService
                 'message' => 'Apartment not found.'
             ];
         }
-        $apartmentId = $id;
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-        $available = Rental::checkAvailability($apartmentId, $startDate, $endDate);
-        if (!$available) {
-            $availablePeriod = Rental::getAvailablePeriods(
-                $apartmentId
-            );
+        if ($apartment->status !== 'approved') {
             return [
                 'success' => false,
-                'AvailablePeriod' => $availablePeriod,
-                'message' => 'The selected dates are not available for this apartment.'
+                'message' => 'Apartment not approved.'
             ];
         }
+        $apartmentId = $id;
+
+        $availablePeriod = Rental::getAvailablePeriods(
+            $apartmentId
+        );
         return [
             'success' => true,
-            'message' => 'The selected dates are available for this apartment.'
+            'AvailablePeriod' => $availablePeriod,
+            'message' => 'The selected dates are not available for this apartment.'
         ];
     }
     public function cancelRental(Request $request, $id): array

@@ -87,7 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/apartments/{id}/rent', [UserRentalController::class, 'store']);
     Route::post('/user/rentals/{id}/cancel', [UserRentalController::class, 'cancel']);
     Route::put('/user/rentals/{id}/update', [UserRentalController::class, 'update']);
-    
+
     //! owner Routes
 
     Route::get('/user/owner/rentals', [UserRentalController::class, 'ownerRentals']);

@@ -34,7 +34,7 @@ class RentalController extends Controller
         $result = $this->rentalService->createRental($request, $id);
         return response()->json($result, $result['success'] ? 201 : 422);
     }
-    public function checkifAvailable(CreateRentalRequest $request, $id)
+    public function checkifAvailable(Request $request, $id)
     {
         $result = $this->rentalService->checkIfAvailable($request, $id);
         return response()->json($result, $result['success'] ? 200 : 422);
