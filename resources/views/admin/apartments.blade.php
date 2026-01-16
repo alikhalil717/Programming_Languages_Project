@@ -312,7 +312,7 @@
                     <td class="p-3">
                         <div class="flex items-center" ${language === 'ar' ? 'style="direction: rtl; text-align: right;"' : ''}>
                             <span class="text-yellow-500">
-                                ${getStarRating(apartment.rating || 0)}
+                                ${getStarRating(apartment.rate || 0)}
                             </span>
                             <span class="text-sm text-gray-500" ${language === 'ar' ? 'style="margin-left: 0.5rem; margin-right: 0;"' : 'style="margin-right: 0.5rem; margin-left: 0;"'}>(${apartment.reviews_count || 0})</span>
                         </div>
